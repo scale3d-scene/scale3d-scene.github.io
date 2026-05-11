@@ -12,8 +12,33 @@
 
   <style>
 
+  .affiliation-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    margin: 10px 0 18px 0;
+  }
+
+  .affiliation-logo {
+    height: 34px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.95;
+  }
+
+  @media (max-width: 800px) {
+    .affiliation-logos {
+      gap: 18px;
+      margin: 8px 0 14px 0;
+    }
+
+    .affiliation-logo {
+      height: 26px;
+    }
+  }
   .table-section {
-    width: 72%;
+    width: 82%;
     margin: 0 auto;
   }
 
@@ -235,7 +260,18 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col">
-            <h2 style="font-size: 40px;"><b>Scalable 3D Reconstruction and Understanding</b></h2>
+          <div style="display:flex; align-items:center; justify-content:center; gap:24px;">
+            <img
+              src="images/scale3d_logo.png"
+              alt="Scale3D logo"
+              style="width:90px; height:90px; object-fit:contain;"
+            />
+
+            <h2 style="font-size: 40px; line-height: 1.2; margin: 0;">
+              <b><span style="color: #d62828;">Scale3D</span></b><br>
+              <b>Scalable 3D Reconstruction and Understanding</b>
+            </h2>
+          </div>
             <br>
             <hr>
             <h5>
@@ -271,6 +307,10 @@
                 </p>
               </div>
             </div>
+            <!-- <div class="affiliation-logos">
+              <img src="images/umd_logo.png" alt="University of Maryland logo" class="affiliation-logo">
+              <img src="images/dolby_logo.jpg" alt="Dolby Laboratories logo" class="affiliation-logo">
+            </div> -->
 
           </div>
         </div>
@@ -299,7 +339,7 @@
           <h3><strong>Abstract</strong></h3>
           <hr style="margin-top: 0px">
           <p class="text-justify">
-            We present Scale3D, a unified framework for scalable 3D reconstruction and scene understanding from complex and long image sequences. Existing methods typically emphasize either geometric reconstruction or object-level understanding, but struggle to maintain both global geometric consistency and coherent instance identities over hundreds to thousands of views. Our key insight is to exploit their mutual synergy: geometry provides a robust basis for cross-view object association, while perception regularizes and refines geometry. Scale3D decomposes long video into overlapping clusters, reconstructs cluster-wise geometry and 2D segmentation masks, and introduces a 3D-Aware Alignment module to align local predictions into a global proxy geometry while recovering temporally coherent, globally ID-consistent video object segmentation. We further propose Instance-Aware Bundle Adjustment, leveraging dense instance-consistent correspondences to refine the camera poses and geometry. We evaluate Scale3D on ScanNet200 and ScanNet++v2 across three different benchmarking tasks: 3D reconstruction, class-agnostic 3D instance segmentation, and panoptic lifting for novel-view rendering. It achieves state-of-the-art results, improving AUC@30 by 5%, AP by 11%, and Panoptic Quality by 10%. Overall, our results highlight the importance of jointly modeling geometry and perception for scalable scene reconstruction and understanding over long image sequences with hundreds to thousands of views.
+            We present <b><span style="color: #d62828;">Scale3D</span></b>, a unified framework for scalable 3D reconstruction and scene understanding from complex and long image sequences. Existing methods typically emphasize either geometric reconstruction or object-level understanding, but struggle to maintain both global geometric consistency and coherent instance identities over hundreds to thousands of views. Our key insight is to exploit their mutual synergy: geometry provides a robust basis for cross-view object association, while perception regularizes and refines geometry. Scale3D decomposes long video into overlapping clusters, reconstructs cluster-wise geometry and 2D segmentation masks, and introduces a 3D-Aware Alignment module to align local predictions into a global proxy geometry while recovering temporally coherent, globally ID-consistent video object segmentation. We further propose Instance-Aware Bundle Adjustment, leveraging dense instance-consistent correspondences to refine the camera poses and geometry. We evaluate Scale3D on ScanNet200 and ScanNet++v2 across three different benchmarking tasks: 3D reconstruction, class-agnostic 3D instance segmentation, and panoptic lifting for novel-view rendering. It achieves state-of-the-art results, improving AUC@30 by 5%, AP by 11%, and Panoptic Quality by 10%. Overall, our results highlight the importance of jointly modeling geometry and perception for scalable scene reconstruction and understanding over long image sequences with hundreds to thousands of views.
           </p>
         </div>
       </div>
@@ -312,7 +352,7 @@
     <div class="container section-container">
       <div class="row">
         <div class="col-12">
-          <h3><strong>Method</strong></h3>
+          <h3><strong><b><span style="color: #d62828;">Scale3D</span></b></strong></h3>
           <hr style="margin-top: 0px">
           <div style="text-align: center;">
             <img src="images/pipeline.png" width="85%" alt="Scale3D pipeline">
@@ -439,7 +479,7 @@
           </tr>
 
           <tr>
-            <td><span class="best">5. Scale3D</span></td>
+            <td><span class="best"><b><span style="color: #d62828;">5. Scale3D</span></b></span></td>
             <td>×</td>
             <td class="group-divider-left best">17.1</td>
             <td class="best">32.7</td>
@@ -547,7 +587,7 @@
           </tr>
 
           <tr>
-            <td><span class="best">11. Scale3D</span> <span class="ref">[43]</span></td>
+            <td><span class="best"><b><span style="color: #d62828;">11. Scale3D</span></b></span> <span class="ref">[43]</span></td>
             <td>✓</td>
             <td class="group-divider-left best">31.5</td>
             <td class="best">48.2</td>
@@ -587,7 +627,7 @@
             playsinline
             style="border-radius: 1px; border: 1px solid #dddddd; background: #000;"
           >
-            <source src="images/Scale3D_supplmentary-video.mp4" type="video/mp4">
+            <source src="images/Scale3D_supplmentary-video-compressed.mp4" type="video/mp4">
             Your browser does not support the video tag.
           </video>
         </div>
@@ -601,7 +641,7 @@
     <div class="container scene-section-container">
       <div class="row">
         <div class="col-12">
-          <h3><strong>Qualitative Results on GT Point Cloud</strong></h3>
+          <h3><strong><b><span style="color: #d62828;">Scale3D</span></b> Results on GT Point Cloud</strong></h3>
           <hr style="margin-top: 0px">
           <b>Click the thumbnails below to select scenes.</b>
 
@@ -700,390 +740,28 @@
   <br><br><br>
   <!-- Qualit predicted PCL -->
 
-  <br><br>
-  <section>
-    <div class="container scene-section-container">
-      <div class="row">
-        <div class="col-12">
-          <h3><strong>Qualitative Results on Predicted Point Cloud</strong></h3>
-          <hr style="margin-top: 0px">
-          <b>Click the thumbnails below to select scenes.</b>
+  <div class="container scene-section-container">
+    <div class="row">
+      <div class="col-12">
+        <h3><strong>More <b><span style="color: #d62828;">Scale3D</span></b> Qualitative Results on Predicted Point Cloud (<a href="quali/index.html">Click Here</a>)</strong></h3>
+        <hr style="margin-top: 0px">
 
-          <div class="thumbnail-strip-wrapper mt-2">
-            <button class="slide-arrow-custom" id="thumb-prev">&#8249;</button>
-
-            <div class="thumbnail-row-custom" id="thumbnail-row">
-              <button class="thumbnail-btn-custom active" data-scene="scannet200_0046_01">
-                <img src="images/thumbnails/0046_01.JPG" alt="ScanNet200 0046_01 thumbnail">
-                ScanNet200 0046_01
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannet200_0064_00">
-                <img src="images/thumbnails/0064_00.JPG" alt="ScanNet200 0064_00 thumbnail">
-                ScanNet200 0064_00
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannet200_0084_02">
-                <img src="images/thumbnails/0084_02.JPG" alt="ScanNet200 0084_02 thumbnail">
-                ScanNet200 0084_02
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannet200_0100_00">
-                <img src="images/thumbnails/0100_00.JPG" alt="ScanNet200 0100_00 thumbnail">
-                ScanNet200 0100_00
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannet200_0131_01">
-                <img src="images/thumbnails/0131_01.JPG" alt="ScanNet200 0100_00 thumbnail">
-                ScanNet200 0100_00
-              </button>              
-            
-            
-            <!-- Scannet++ v2  -->
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_3e8b">
-                <img src="images/thumbnails/gt_3e8b.JPG" alt="ScanNet++ 3e8b thumbnail">
-                ScanNet++ 3e8b
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_3f15">
-                <img src="images/thumbnails/gt_3f15.JPG" alt="ScanNet++ 3f15 thumbnail">
-                ScanNet++ 3e8b
-              </button>
-
-              <!-- 
-               <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_3f15">
-                <img src="images/thumbnails/gt_3f15.JPG" alt="ScanNet++ 3f15 thumbnail">
-                ScanNet++ 3f15
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_5ee7">
-                <img src="images/thumbnails/gt_5ee7.JPG" alt="ScanNet++ 5ee7 thumbnail">
-                ScanNet++ 5ee7
-              </button>
-
-              <!--<button class="thumbnail-btn-custom" data-scene="scannetpp_gt_7b64">
-                <img src="images/thumbnails/gt_7b64.JPG" alt="ScanNet++ 7b64 thumbnail">
-                ScanNet++ 7b64
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_7bc2">
-                <img src="images/thumbnails/gt_7bc2.JPG" alt="ScanNet++ 7bc2 thumbnail">
-                ScanNet++ 7bc2
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_31a2">
-                <img src="images/thumbnails/gt_31a2.JPG" alt="ScanNet++ 31a2 thumbnail">
-                ScanNet++ 31a2
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_40ae">
-                <img src="images/thumbnails/gt_40ae.JPG" alt="ScanNet++ 40ae thumbnail">
-                ScanNet++ 40ae
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_45b0">
-                <img src="images/thumbnails/gt_45b0.JPG" alt="ScanNet++ 45b0 thumbnail">
-                ScanNet++ 45b0
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_99fa">
-                <img src="images/thumbnails/gt_99fa.JPG" alt="ScanNet++ 99fa thumbnail">
-                ScanNet++ 99fa
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_286b">
-                <img src="images/thumbnails/gt_286b.JPG" alt="ScanNet++ 286b thumbnail">
-                ScanNet++ 286b
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_825d">
-                <img src="images/thumbnails/gt_825d.JPG" alt="ScanNet++ 825d thumbnail">
-                ScanNet++ 825d
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_5748">
-                <img src="images/thumbnails/gt_5748.JPG" alt="ScanNet++ 5748 thumbnail">
-                ScanNet++ 5748
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_9071">
-                <img src="images/thumbnails/gt_9071.JPG" alt="ScanNet++ 9071 thumbnail">
-                ScanNet++ 9071
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_3864">
-                <img src="images/thumbnails/gt_3864.JPG" alt="ScanNet++ 3864 thumbnail">
-                ScanNet++ 3864
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_a24f">
-                <img src="images/thumbnails/gt_a24f.JPG" alt="ScanNet++ a24f thumbnail">
-                ScanNet++ a24f
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_a980">
-                <img src="images/thumbnails/gt_a980.JPG" alt="ScanNet++ a980 thumbnail">
-                ScanNet++ a980
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_bcd2">
-                <img src="images/thumbnails/gt_bcd2.JPG" alt="ScanNet++ bcd2 thumbnail">
-                ScanNet++ bcd2
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_e398">
-                <img src="images/thumbnails/gt_e398.JPG" alt="ScanNet++ e398 thumbnail">
-                ScanNet++ e398
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_f2dc">
-                <img src="images/thumbnails/gt_f2dc.JPG" alt="ScanNet++ f2dc thumbnail">
-                ScanNet++ f2dc
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_gt_f9f9">
-                <img src="images/thumbnails/gt_f9f9.JPG" alt="ScanNet++ f9f9 thumbnail">
-                ScanNet++ f9f9
-              </button> -->
-            </div>
-            <button class="slide-arrow-custom" id="thumb-next">&#8250;</button>
-          </div>
+        <div style="text-align:center; margin-top: 16px;">
+          <a href="quali/index.html">
+            <img
+              src="images/quali_pred.png"
+              alt="More qualitative results on predicted point cloud"
+              style="width: 85%; border: 1px solid #dddddd; border-radius: 10px;"
+            >
+          </a>
         </div>
+
+        <p style="text-align:center; margin-top: 10px;">
+          Click the figure to view more qualitative results.
+        </p>
       </div>
     </div>
-  </section>
-
-  <br>
-
-  <section>
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-
-          <div class="scene-panel active" id="scannet200_0046_01">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_scene0046_01_pred_panoptic.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-
-          <div class="scene-panel" id="scannet200_0064_00">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_scene0064_00_pred_panoptic.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-
-          <div class="scene-panel" id="scannet200_0084_02">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_scene0084_02_pred_panoptic.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-
-          <div class="scene-panel" id="scannet200_0100_00">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_scene0100_00_pred_panoptic.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-
-          <div class="scene-panel" id="scannet200_0131_01">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_scene0131_01_pred_panoptic.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-          
-          <!-- Scannet++ -->
-          <div class="scene-panel" id="scannetpp_gt_3e8b">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_3e8bba0176_pred_panoptic.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_3f15">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_3f15a9266d_pred_panoptic.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-            <!-- 
-          <div class="scene-panel" id="scannetpp_gt_3f15">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_3f15a9266d_pred_panoptic.ply"></div>
-            </div>
-          
-
-          <div class="scene-panel" id="scannetpp_gt_5ee7">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_5ee7c22ba0_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <!-- <div class="scene-panel" id="scannetpp_gt_7b64">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_7b6477cb95_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_7bc2">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_7bc286c1b6_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_31a2">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_31a2c91c43_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_40ae">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_40aec5fffa_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_45b0">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_45b0dac5e3_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_99fa">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_99fa5c25e1_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_286b">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_286b55a2bf_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_825d">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_825d228aec_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_5748">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_5748ce6f01_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_9071">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_9071e139d9_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_3864">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_3864514494_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_a24f">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_a24f64f7fb_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_a980">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_a980334473_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_bcd2">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_bcd2436daf_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_e398">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_e398684d27_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_f2dc">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_f2dc06b1d2_pred_panoptic.ply"></div>
-            </div>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_gt_f9f9">
-            <h4><strong>3D Instance Segmentation on Predicted point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/debug_f9f95681fd_pred_panoptic.ply"></div>
-            </div>
-          </div> -->
-
-          
-        </div>
-      </div>
-    </div>
-  </section>
+  </div>
 
   <div class="container section-container">
     <div class="row">
@@ -1116,7 +794,7 @@
 
   <footer class="text-center" style="margin-bottom: 10px; font-size: medium;">
     <hr>
-    Thanks to <a href="https://yd-yin.github.io" target="_blank">Yingda Yin</a> for the
+    Borrow the 
     <a href="https://yd-yin.github.io/SAI3D/" target="_blank">website template</a>.
   </footer>
 
@@ -1125,7 +803,7 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
 
-    const viewerStates = [];
+    const viewerStates = new Map();
 
     function createControls(camera, renderer) {
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -1138,7 +816,6 @@
       controls.panSpeed = 1.3;
 
       controls.screenSpacePanning = true;
-
       controls.enablePan = true;
       controls.enableZoom = true;
       controls.enableRotate = true;
@@ -1161,6 +838,9 @@
     }
 
     function initPLYViewer(container) {
+      if (!container) return;
+      if (viewerStates.has(container)) return;
+
       const plyPath = container.dataset.ply;
       if (!plyPath) return;
 
@@ -1243,12 +923,7 @@
           controls.target.set(0, 0, 0);
           controls.update();
 
-          viewerStates.push({ container, camera, renderer, controls });
-
           console.log('PLY loaded:', plyPath);
-          console.log('Vertex count:', geometry.attributes.position.count);
-          console.log('Has color:', geometry.hasAttribute('color'));
-          console.log('Bounding box size:', size);
         },
         undefined,
         (error) => {
@@ -1258,31 +933,38 @@
       );
 
       function animate() {
+        if (!viewerStates.has(container)) return;
         requestAnimationFrame(animate);
         controls.update();
         renderer.render(scene, camera);
       }
 
+      viewerStates.set(container, {
+        camera,
+        renderer,
+        controls,
+        scene
+      });
+
       animate();
     }
 
-    function resizeViewers() {
-      viewerStates.forEach(({ container, camera, renderer }) => {
-        const width = Math.max(container.clientWidth, 600);
-        const height = Math.max(container.clientHeight, 360);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
-      });
+    function resizeViewer(container) {
+      const state = viewerStates.get(container);
+      if (!state) return;
+
+      const width = Math.max(container.clientWidth, 600);
+      const height = Math.max(container.clientHeight, 360);
+
+      state.camera.aspect = width / height;
+      state.camera.updateProjectionMatrix();
+      state.renderer.setSize(width, height);
     }
 
-    document.querySelectorAll('.ply-viewer').forEach(initPLYViewer);
-    window.addEventListener('resize', resizeViewers);
-
-    const sceneButtons = document.querySelectorAll('.thumbnail-btn-custom');
-    const scenePanels = document.querySelectorAll('.scene-panel');
-
     function activateScene(sceneId) {
+      const sceneButtons = document.querySelectorAll('.thumbnail-btn-custom');
+      const scenePanels = document.querySelectorAll('.scene-panel');
+
       sceneButtons.forEach((btn) => {
         btn.classList.toggle('active', btn.dataset.scene === sceneId);
       });
@@ -1291,10 +973,23 @@
         panel.classList.toggle('active', panel.id === sceneId);
       });
 
-      setTimeout(resizeViewers, 120);
+      const activePanel = document.getElementById(sceneId);
+      if (!activePanel) return;
+
+      const viewer = activePanel.querySelector('.ply-viewer');
+      if (viewer) {
+        initPLYViewer(viewer);
+        setTimeout(() => resizeViewer(viewer), 120);
+      }
     }
 
-    sceneButtons.forEach((button) => {
+    window.addEventListener('resize', () => {
+      viewerStates.forEach((_, container) => {
+        resizeViewer(container);
+      });
+    });
+
+    document.querySelectorAll('.thumbnail-btn-custom').forEach((button) => {
       button.addEventListener('click', () => {
         activateScene(button.dataset.scene);
       });
@@ -1312,6 +1007,15 @@
       nextBtn.addEventListener('click', () => {
         thumbnailRow.scrollBy({ left: 220, behavior: 'smooth' });
       });
+    }
+
+    const firstActivePanel = document.querySelector('.scene-panel.active');
+    if (firstActivePanel) {
+      const firstViewer = firstActivePanel.querySelector('.ply-viewer');
+      if (firstViewer) {
+        initPLYViewer(firstViewer);
+        setTimeout(() => resizeViewer(firstViewer), 120);
+      }
     }
   </script>
 </body>

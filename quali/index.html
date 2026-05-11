@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scale3D Qualitative Results</title>
+
+  <link href="../css/bootstrap-4.4.1.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css" />
+
+  <style>
+    body {
+      background: #ffffff;
+      font-family: "Open Sans", sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 22px;
+      left: 22px;
+      z-index: 1000;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.92);
+      color: #222222;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .back-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.98);
+      color: #111111;
+      text-decoration: none;
+    }
+
+    .back-button:active {
+      transform: translateY(0);
+    }
+
+    .back-button-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3f3f3;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .section-container {
+      width: 88%;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+      text-align: center;
+      color: #555;
+      margin-bottom: 26px;
+    }
+
+    .thumbnail-strip-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .thumbnail-row-custom {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 8px 0;
+      width: 100%;
+    }
+
+    .thumbnail-row-custom::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .thumbnail-row-custom::-webkit-scrollbar-thumb {
+      background: #cccccc;
+      border-radius: 999px;
+    }
+
+    .slide-arrow-custom {
+      border: none;
+      background: #f3f3f3;
+      border-radius: 999px;
+      width: 42px;
+      height: 42px;
+      font-size: 22px;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .thumbnail-btn-custom {
+      border: 1px solid #dddddd;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 8px;
+      min-width: 175px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .thumbnail-btn-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    .thumbnail-btn-custom.active {
+      border-color: #888;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .thumbnail-btn-custom img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .scene-panel {
+      display: none;
+      margin-top: 12px;
+      margin-bottom: 40px;
+    }
+
+    .scene-panel.active {
+      display: block;
+    }
+
+    .scene-title {
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 38px;
+    }
+
+    .dual-viewer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      margin-top: 14px;
+    }
+
+    .viewer-card {
+      width: 100%;
+    }
+
+    .viewer-card-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .ply-viewer-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .ply-viewer {
+      width: 72%;
+      height: 560px;
+      border: 1px solid #dddddd;
+      border-radius: 10px;
+      background: #f7f7f7;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .viewer-loading,
+    .viewer-error {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666666;
+      font-size: 15px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .instruction-text {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 15px;
+    }
+
+    @media (max-width: 1100px) {
+      .ply-viewer {
+        width: 88%;
+        height: 460px;
+      }
+
+      .scene-title {
+        font-size: 32px;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .back-button {
+        top: 14px;
+        left: 14px;
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+
+      .back-button-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+      }
+
+      .section-container {
+        width: 94%;
+      }
+
+      .ply-viewer {
+        width: 100%;
+        height: 340px;
+      }
+
+      .thumbnail-btn-custom {
+        min-width: 150px;
+      }
+
+      .viewer-card-title {
+        font-size: 18px;
+      }
+
+      .scene-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+
+<body>
+  <a class="back-button" href="../index.html">
+    <span class="back-button-icon">←</span>
+    <span>Back to main page</span>
+  </a>
+
+  <div class="section-container">
+    <h1 class="page-title"><b><span style="color: #d62828;">Scale3D</span></b> Qualitative Results</h1>
+    <p class="page-subtitle">
+      3D scanned mesh and 3D instance segmentation on predicted point clouds.
+    </p>
+
+    <div class="thumbnail-strip-wrapper">
+      <button class="slide-arrow-custom" id="thumb-prev">&#8249;</button>
+      <div class="thumbnail-row-custom" id="thumbnail-row"></div>
+      <button class="slide-arrow-custom" id="thumb-next">&#8250;</button>
+    </div>
+
+    <div id="scene-panels"></div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
+
+    const SCENES = [
+      { short: '0d2e', full: '0d2ee665be', thumb: '../images/thumbnails/0d2e.JPG' },
+      { short: '1ada', full: '1ada7a0617', thumb: '../images/thumbnails/1ada.JPG' },
+      { short: '3e8b', full: '3e8bba0176', thumb: '../images/thumbnails/gt_3e8b.JPG' },
+      { short: '3f15', full: '3f15a9266d', thumb: '../images/thumbnails/gt_3f15.JPG' },
+      { short: '5ee7', full: '5ee7c22ba0', thumb: '../images/thumbnails/gt_5ee7.JPG' },
+      { short: '7b64', full: '7b6477cb95', thumb: '../images/thumbnails/gt_7b64.JPG' },
+      { short: '7bc2', full: '7bc286c1b6', thumb: '../images/thumbnails/gt_7bc2.JPG' },
+      { short: '31a2', full: '31a2c91c43', thumb: '../images/thumbnails/gt_31a2.JPG' },
+      { short: '40ae', full: '40aec5fffa', thumb: '../images/thumbnails/gt_40ae.JPG' },
+      { short: '45b0', full: '45b0dac5e3', thumb: '../images/thumbnails/gt_45b0.JPG' },
+      { short: '99fa', full: '99fa5c25e1', thumb: '../images/thumbnails/gt_99fa.JPG' },
+      { short: '286b', full: '286b55a2bf', thumb: '../images/thumbnails/gt_286b.JPG' },
+      { short: '825d', full: '825d228aec', thumb: '../images/thumbnails/gt_825d.JPG' },
+      { short: '5748', full: '5748ce6f01', thumb: '../images/thumbnails/gt_5748.JPG' },
+      { short: '9071', full: '9071e139d9', thumb: '../images/thumbnails/gt_9071.JPG' },
+      { short: '3864', full: '3864514494', thumb: '../images/thumbnails/gt_3864.JPG' },
+      { short: 'a24f', full: 'a24f64f7fb', thumb: '../images/thumbnails/gt_a24f.JPG' },
+      { short: 'a980', full: 'a980334473', thumb: '../images/thumbnails/gt_a980.JPG' },
+      { short: 'bcd2', full: 'bcd2436daf', thumb: '../images/thumbnails/gt_bcd2.JPG' },
+      { short: 'e398', full: 'e398684d27', thumb: '../images/thumbnails/gt_e398.JPG' },
+      { short: 'f2dc', full: 'f2dc06b1d2', thumb: '../images/thumbnails/gt_f2dc.JPG' },
+      { short: 'f9f9', full: 'f9f95681fd', thumb: '../images/thumbnails/gt_f9f9.JPG' }
+    ];
+
+    const viewerStates = new Map();
+    let activeSceneId = null;
+
+    const thumbnailRow = document.getElementById('thumbnail-row');
+    const scenePanelsRoot = document.getElementById('scene-panels');
+
+    function sceneId(shortId) {
+      return `scannetpp_gt_${shortId}`;
+    }
+
+    function meshPath(fullId) {
+      return `../ply_gt/${fullId}_mesh_aligned_0.05.ply`;
+    }
+
+    function predPath(fullId) {
+      return `../ply/debug_${fullId}_pred_panoptic.ply`;
+    }
+
+    function buildUI() {
+      const thumbHtml = SCENES.map((scene, idx) => `
+        <button class="thumbnail-btn-custom ${idx === 0 ? 'active' : ''}" data-scene="${sceneId(scene.short)}">
+          <img src="${scene.thumb}" alt="ScanNet++ ${scene.short} thumbnail">
+          ScanNet++ ${scene.short}
+        </button>
+      `).join('');
+
+      const panelHtml = SCENES.map((scene, idx) => `
+        <div class="scene-panel ${idx === 0 ? 'active' : ''}" id="${sceneId(scene.short)}">
+          <h3 class="scene-title">ScanNet++ ${scene.short}</h3>
+
+          <div class="dual-viewer-grid">
+            <div class="viewer-card">
+              <div class="viewer-card-title">3D Scanned Mesh</div>
+              <div class="ply-viewer-wrapper">
+                <div class="ply-viewer" data-kind="mesh" data-ply="${meshPath(scene.full)}"></div>
+              </div>
+              <p class="instruction-text">
+                <b>Left drag:</b> rotate &nbsp; | &nbsp;
+                <b>Right drag:</b> pan &nbsp; | &nbsp;
+                <b>Wheel / trackpad:</b> zoom
+              </p>
+            </div>
+
+            <div class="viewer-card">
+              <div class="viewer-card-title">3D Instance Segmentation on Predicted Point Cloud</div>
+              <div class="ply-viewer-wrapper">
+                <div class="ply-viewer" data-kind="pred" data-ply="${predPath(scene.full)}"></div>
+              </div>
+              <p class="instruction-text">
+                <b>Left drag:</b> rotate &nbsp; | &nbsp;
+                <b>Right drag:</b> pan &nbsp; | &nbsp;
+                <b>Wheel / trackpad:</b> zoom
+              </p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      thumbnailRow.innerHTML = thumbHtml;
+      scenePanelsRoot.innerHTML = panelHtml;
+      activeSceneId = sceneId(SCENES[0].short);
+    }
+
+    function createControls(camera, renderer) {
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.12;
+      controls.rotateSpeed = 0.7;
+      controls.zoomSpeed = 1.6;
+      controls.panSpeed = 1.3;
+      controls.screenSpacePanning = true;
+      controls.enablePan = true;
+      controls.enableZoom = true;
+      controls.enableRotate = true;
+      controls.minDistance = 0.02;
+      controls.maxDistance = 1000;
+
+      controls.mouseButtons = {
+        LEFT: THREE.MOUSE.ROTATE,
+        MIDDLE: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.PAN
+      };
+
+      controls.touches = {
+        ONE: THREE.TOUCH.ROTATE,
+        TWO: THREE.TOUCH.DOLLY_PAN
+      };
+
+      return controls;
+    }
+
+    function destroyViewer(container) {
+      const state = viewerStates.get(container);
+      if (!state) return;
+
+      state.controls.dispose();
+
+      if (state.object) {
+        state.scene.remove(state.object);
+        if (state.object.geometry) state.object.geometry.dispose();
+        if (state.object.material) state.object.material.dispose();
+      }
+
+      state.renderer.dispose();
+      container.innerHTML = '';
+      viewerStates.delete(container);
+    }
+
+    function destroyViewersInPanel(panel) {
+      if (!panel) return;
+      const viewers = panel.querySelectorAll('.ply-viewer');
+      viewers.forEach((viewer) => destroyViewer(viewer));
+    }
+
+    function initPLYViewer(container) {
+      if (!container) return;
+      if (viewerStates.has(container)) return;
+
+      const plyPath = container.dataset.ply;
+      const kind = container.dataset.kind || 'pred';
+      if (!plyPath) return;
+
+      const width = Math.max(container.clientWidth, 600);
+      const height = Math.max(container.clientHeight, 360);
+
+      container.innerHTML = '<div class="viewer-loading">Loading 3D scene...</div>';
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf7f7f7);
+
+      const camera = new THREE.PerspectiveCamera(60, width / height, 0.001, 5000);
+      camera.position.set(0, 0, 3);
+
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: false
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      renderer.setSize(width, height);
+
+      const controls = createControls(camera, renderer);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 1.45));
+
+      const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.0);
+      dirLight1.position.set(2, 2, 2);
+      scene.add(dirLight1);
+
+      const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.6);
+      dirLight2.position.set(-2, 1, -1);
+      scene.add(dirLight2);
+
+      const loader = new PLYLoader();
+
+      loader.load(
+        plyPath,
+        (geometry) => {
+          container.innerHTML = '';
+          container.appendChild(renderer.domElement);
+
+          geometry.computeBoundingBox();
+
+          const box = geometry.boundingBox;
+          const center = new THREE.Vector3();
+          box.getCenter(center);
+          geometry.translate(-center.x, -center.y, -center.z);
+
+          geometry.computeBoundingBox();
+          const size = new THREE.Vector3();
+          geometry.boundingBox.getSize(size);
+          const maxDim = Math.max(size.x, size.y, size.z);
+
+          let object;
+
+          const hasFaces = !!geometry.index || (geometry.attributes.position && geometry.attributes.position.count % 3 === 0 && kind === 'mesh');
+
+          if (kind === 'mesh' && hasFaces) {
+            geometry.computeVertexNormals();
+            object = new THREE.Mesh(
+              geometry,
+              new THREE.MeshStandardMaterial({
+                vertexColors: geometry.hasAttribute('color'),
+                color: geometry.hasAttribute('color') ? 0xffffff : 0xcccccc,
+                flatShading: false
+              })
+            );
+          } else {
+            object = new THREE.Points(
+              geometry,
+              new THREE.PointsMaterial({
+                size: Math.max(maxDim * 0.007, 0.007),
+                vertexColors: geometry.hasAttribute('color'),
+                color: geometry.hasAttribute('color') ? 0xffffff : 0x444444
+              })
+            );
+          }
+
+          scene.add(object);
+
+          const distance = Math.max(maxDim * 2.4, 3.0);
+          camera.position.set(distance * 0.55, distance * 0.35, distance);
+          camera.lookAt(0, 0, 0);
+
+          controls.target.set(0, 0, 0);
+          controls.update();
+
+          const state = viewerStates.get(container);
+          if (state) state.object = object;
+        },
+        undefined,
+        (error) => {
+          console.error('Failed to load PLY:', plyPath, error);
+          container.innerHTML = '<div class="viewer-error">Failed to load ' + plyPath + '</div>';
+        }
+      );
+
+      function animate() {
+        const state = viewerStates.get(container);
+        if (!state) return;
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      viewerStates.set(container, {
+        camera,
+        renderer,
+        controls,
+        scene,
+        object: null
+      });
+
+      animate();
+    }
+
+    function resizeViewer(container) {
+      const state = viewerStates.get(container);
+      if (!state) return;
+
+      const width = Math.max(container.clientWidth, 600);
+      const height = Math.max(container.clientHeight, 360);
+
+      state.camera.aspect = width / height;
+      state.camera.updateProjectionMatrix();
+      state.renderer.setSize(width, height);
+    }
+
+    function initViewersInPanel(panel) {
+      if (!panel) return;
+      const viewers = panel.querySelectorAll('.ply-viewer');
+      viewers.forEach((viewer) => {
+        initPLYViewer(viewer);
+        setTimeout(() => resizeViewer(viewer), 120);
+      });
+    }
+
+    function activateScene(sceneIdValue) {
+      if (activeSceneId === sceneIdValue) return;
+
+      const previousPanel = document.getElementById(activeSceneId);
+      destroyViewersInPanel(previousPanel);
+
+      document.querySelectorAll('.thumbnail-btn-custom').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.scene === sceneIdValue);
+      });
+
+      document.querySelectorAll('.scene-panel').forEach((panel) => {
+        panel.classList.toggle('active', panel.id === sceneIdValue);
+      });
+
+      const activePanel = document.getElementById(sceneIdValue);
+      activeSceneId = sceneIdValue;
+
+      initViewersInPanel(activePanel);
+    }
+
+    function attachEvents() {
+      document.querySelectorAll('.thumbnail-btn-custom').forEach((button) => {
+        button.addEventListener('click', () => {
+          activateScene(button.dataset.scene);
+        });
+      });
+
+      const prevBtn = document.getElementById('thumb-prev');
+      const nextBtn = document.getElementById('thumb-next');
+
+      if (prevBtn && nextBtn && thumbnailRow) {
+        prevBtn.addEventListener('click', () => {
+          thumbnailRow.scrollBy({ left: -220, behavior: 'smooth' });
+        });
+
+        nextBtn.addEventListener('click', () => {
+          thumbnailRow.scrollBy({ left: 220, behavior: 'smooth' });
+        });
+      }
+
+      window.addEventListener('resize', () => {
+        viewerStates.forEach((_, container) => resizeViewer(container));
+      });
+    }
+
+    buildUI();
+    attachEvents();
+
+    const firstActivePanel = document.getElementById(activeSceneId);
+    initViewersInPanel(firstActivePanel);
+  </script>
+</body>
+</html>
