@@ -1,0 +1,3550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SEGA: Multi-View 3D Instance Segmentation with Geometry-Guided Association for Indoor Environments</title>
+  <meta
+  name="description"
+  content="SEGA is a geometry-guided framework for indoor 3D instance segmentation from multi-view image sequences, combining 3D-aware instance association with instance-aware geometry refinement."
+>
+
+  <link href="css/bootstrap-4.4.1.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="css/index.css" />
+
+  <style>
+
+  .affiliation-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    margin: 10px 0 18px 0;
+  }
+
+  .affiliation-logo {
+    height: 34px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.95;
+  }
+
+  @media (max-width: 800px) {
+    .affiliation-logos {
+      gap: 18px;
+      margin: 8px 0 14px 0;
+    }
+
+    .affiliation-logo {
+      height: 26px;
+    }
+  }
+  .table-section {
+    width: 82%;
+    margin: 0 auto;
+  }
+
+  .paper-table-title {
+    font-size: 18px;
+    line-height: 1.35;
+    margin-bottom: 10px;
+  }
+
+  .paper-table-wrap {
+    overflow-x: auto;
+  }
+
+  .paper-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 18px;
+    line-height: 1.2;
+    border-top: 3px solid #222;
+    border-bottom: 3px solid #222;
+  }
+
+  .paper-table th,
+  .paper-table td {
+    padding: 6px 10px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .paper-table th:first-child,
+  .paper-table td:first-child {
+    text-align: left;
+  }
+
+  .paper-table thead tr:first-child th {
+    font-weight: 700;
+    border-bottom: 2px solid #777;
+  }
+
+  .paper-table thead tr:last-child th {
+    border-bottom: 2px solid #777;
+  }
+
+  .group-divider-left {
+    border-left: 3px solid #888;
+  }
+
+  .section-divider td {
+    border-top: 2px solid #888;
+    padding-top: 10px;
+  }
+
+  .best {
+    font-weight: 800;
+  }
+
+  .second {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .ref {
+    border: 1px solid #6cc04a;
+    padding: 0 2px;
+    border-radius: 2px;
+  }    
+    body {
+      background: #ffffff no-repeat fixed top left;
+      font-family: "Open Sans", sans-serif;
+    }
+
+    .section-container {
+      width: 70%;
+      margin: 0 auto;
+    }
+
+    .scene-section-container {
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .ply-viewer-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .ply-viewer {
+      width: 100%;
+      height: 520px;
+      border: 1px solid #dddddd;
+      border-radius: 10px;
+      background: #f7f7f7;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .viewer-loading,
+    .viewer-error {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666666;
+      font-size: 15px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .thumbnail-strip-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .thumbnail-row-custom {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 8px 0;
+      width: 100%;
+    }
+
+    .thumbnail-row-custom::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .thumbnail-row-custom::-webkit-scrollbar-thumb {
+      background: #cccccc;
+      border-radius: 999px;
+    }
+
+    .thumbnail-btn-custom {
+      border: 1px solid #dddddd;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 8px;
+      min-width: 170px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .thumbnail-btn-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    .thumbnail-btn-custom.active {
+      border-color: #999999;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    }
+
+    .thumbnail-btn-custom img {
+      width: 100%;
+      height: 95px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .slide-arrow-custom {
+      border: none;
+      background: #f3f3f3;
+      border-radius: 999px;
+      width: 40px;
+      height: 40px;
+      font-size: 22px;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .scene-panel {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .scene-panel.active {
+      display: block;
+    }
+
+    .instruction-text {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 15px;
+    }
+
+    @media (max-width: 900px) {
+      .section-container {
+        width: 92%;
+      }
+
+      .ply-viewer {
+        width: 100%;
+        height: 360px;
+      }
+    }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+    }
+  }
+  </script>
+
+<!-- ================= SEGA DESIGN ================= -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+>
+
+<style id="sega-design">
+  :root {
+    --sega-red: #ff3131;
+    --sega-orange: #ff914d;
+    --sega-ink: #202024;
+    --sega-muted: #63636b;
+    --sega-line: #e3e3e5;
+    --sega-paper: #fff;
+    --sega-width: 1280px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 78px;
+  }
+
+  body {
+    margin: 0;
+    background: var(--sega-paper);
+    color: var(--sega-ink);
+    font-family: "Roboto", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: #ffe0d9;
+    color: #202024;
+  }
+
+  a {
+    color: inherit;
+    text-underline-offset: 4px;
+  }
+
+  a:hover {
+    color: #b92222;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    outline: 3px solid #b92222;
+    outline-offset: 5px;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  body > br {
+    display: none;
+  }
+
+  .container,
+  .section-container,
+  .scene-section-container,
+  .table-section {
+    width: calc(100% - 80px);
+    max-width: var(--sega-width);
+    margin-right: auto;
+    margin-left: auto;
+    padding: 0;
+  }
+
+  .container > .row {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  .container > .row > .col-12 {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .sega-word {
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    color: var(--sega-red);
+    letter-spacing: 0.015em;
+  }
+
+  .sega-inline {
+    color: var(--sega-red) !important;
+  }
+
+  /* Navigation */
+
+  .sega-nav {
+    width: calc(100% - 80px);
+    max-width: var(--sega-width);
+    margin: 0 auto;
+    min-height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--sega-line);
+  }
+
+  .sega-nav > a {
+    font-size: 25px;
+    text-decoration: none;
+  }
+
+  .sega-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    font-size: 13px;
+  }
+
+  .sega-nav-links a {
+    color: var(--sega-muted);
+    text-decoration: none;
+    padding: 10px 0;
+  }
+
+  .sega-nav-links a:hover {
+    color: #b92222;
+  }
+
+  /* Paper identity */
+
+  .jumbotron {
+    background: #fff;
+    border-radius: 0;
+    padding: 60px 0 34px !important;
+    margin: 0;
+  }
+
+  .jumbotron .container-fluid {
+    width: calc(100% - 80px);
+    max-width: var(--sega-width);
+    padding: 0;
+  }
+
+  .jumbotron .row {
+    margin: 0;
+  }
+
+  .jumbotron .col {
+    padding: 0;
+  }
+
+  .sega-identity {
+    display: grid !important;
+    grid-template-columns: 240px minmax(0, 1fr);
+    align-items: center !important;
+    gap: 44px !important;
+    text-align: left;
+  }
+
+  .sega-identity-mark {
+    position: relative;
+    padding-bottom: 15px;
+    border-bottom: 5px solid var(--sega-red);
+  }
+
+  .sega-identity-mark .sega-word {
+    display: block;
+    font-size: 116px;
+    line-height: 1.05;
+  }
+
+  .sega-identity-mark img {
+    width: 44px !important;
+    height: 44px !important;
+    object-fit: contain;
+    position: absolute;
+    left: 0;
+    bottom: -60px;
+  }
+
+  .sega-title {
+    font-family: "Roboto", sans-serif;
+    font-size: clamp(28px, 3vw, 42px) !important;
+    font-weight: 700;
+    line-height: 1.19 !important;
+    letter-spacing: -0.025em;
+    margin: 0 !important;
+    color: var(--sega-red);
+    text-wrap: balance;
+  }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .sega-title {
+      background: linear-gradient(
+        90deg,
+        #ff3131 0%,
+        #ff914d 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  }
+
+  .jumbotron .col > br,
+  .jumbotron .col > hr {
+    display: none;
+  }
+
+  .sega-authors {
+    margin: 30px 0 0 284px !important;
+    font-size: 16px;
+    line-height: 1.9 !important;
+    text-align: left;
+    font-weight: 400;
+  }
+
+  .sega-authors a {
+    color: #343438;
+    text-decoration: none;
+    border-bottom: 1px solid #bdbdc2;
+  }
+
+  .sega-authors a:hover {
+    color: #b92222;
+    border-color: #b92222;
+  }
+
+  .sega-authors sup,
+  .sega-affiliations sup {
+    color: #b92222;
+    font-size: 10px;
+    margin-left: 2px;
+  }
+
+  .sega-affiliations {
+    text-align: left !important;
+    margin: 14px 0 0 284px !important;
+    font-size: 13px !important;
+    line-height: 1.8;
+    color: var(--sega-muted);
+  }
+
+  .sega-actions {
+    justify-content: flex-start !important;
+    margin: 22px 0 0 284px !important;
+    gap: 10px;
+  }
+
+  .sega-actions p {
+    margin: 0 !important;
+  }
+
+  .sega-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 17px;
+    border: 1px solid #bdbdc2;
+    border-radius: 3px;
+    background: #fff;
+    color: var(--sega-ink);
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: none;
+  }
+
+  .sega-actions a.btn:hover {
+    background: #202024;
+    border-color: #202024;
+    color: #fff;
+  }
+
+  .sega-actions button:disabled {
+    color: #626269;
+    background: #f6f6f6;
+    border-color: #e3e3e5;
+    opacity: 1;
+  }
+
+  /* Teaser */
+
+  #main-video {
+    margin-top: 24px;
+    margin-bottom: 84px;
+  }
+
+  #main-video .row .row {
+    margin: 0;
+  }
+
+  #main-video img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Research sections */
+
+  .sega-section {
+    margin-top: 82px;
+    margin-bottom: 0;
+  }
+
+  .sega-section h3,
+  .sega-section > h4 {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin: 0 0 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--sega-line);
+    font-size: clamp(23px, 2.3vw, 30px);
+    line-height: 1.28;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+  }
+
+  .sega-section h3::before,
+  .sega-section > h4::before {
+    content: attr(data-section-number);
+    font-family: "Roboto", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: #b92222;
+    flex: 0 0 26px;
+    font-weight: 500;
+  }
+
+  .sega-section h3 strong,
+  .sega-section h4 strong {
+    font-weight: 600;
+  }
+
+  .sega-section hr {
+    display: none;
+  }
+
+  .sega-section p {
+    font-size: 17px;
+    line-height: 1.85;
+  }
+
+  .sega-section .text-justify {
+    text-align: left !important;
+  }
+
+  #abstract .col-12 {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    column-gap: 44px;
+    border-top: 1px solid var(--sega-line);
+    padding-top: 22px;
+  }
+
+  #abstract h3 {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  #abstract p {
+    margin: 0;
+    max-width: 850px;
+  }
+
+  #method img {
+    width: 100% !important;
+    max-width: 1100px;
+    height: auto;
+  }
+
+  #method .col-12 > br {
+    display: none;
+  }
+
+  #method p {
+    max-width: 880px;
+    margin: 28px auto 0;
+  }
+
+  /* Benchmark */
+
+  .paper-table-title {
+    max-width: 920px;
+    color: var(--sega-muted);
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 22px;
+  }
+
+  .paper-table-wrap {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border-bottom: 1px solid #202024;
+  }
+
+  .paper-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+    border-top: 2px solid #202024;
+    border-bottom: 0;
+  }
+
+  .paper-table th,
+  .paper-table td {
+    padding: 12px 9px;
+    white-space: nowrap;
+  }
+
+  .paper-table thead th {
+    background: #f7f7f7;
+  }
+
+  .paper-table thead tr:first-child th,
+  .paper-table thead tr:last-child th {
+    border-bottom: 1px solid #cacace;
+  }
+
+  .paper-table tbody tr {
+    border-bottom: 1px solid #ededee;
+  }
+
+  .paper-table tbody tr:hover {
+    background: #f8f8f8;
+  }
+
+  .paper-table .group-divider-left {
+    border-left: 1px solid #dcdce0;
+  }
+
+  .paper-table .section-divider td {
+    border-top: 2px solid #a9a9ae;
+    padding-top: 16px;
+  }
+
+  .paper-table .sega-result {
+    background: #fff0ec;
+  }
+
+  .paper-table .sega-result:hover {
+    background: #ffe7e0;
+  }
+
+  .paper-table .sega-result td:first-child {
+    box-shadow: inset 3px 0 0 var(--sega-red);
+  }
+
+  .paper-table .best {
+    font-weight: 800;
+  }
+
+  .paper-table .second {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .paper-table .ref {
+    border: 0;
+    padding: 0;
+    color: #76767d;
+    font-size: 10px;
+    vertical-align: super;
+  }
+
+  /* Video */
+
+  #video video {
+    width: 100% !important;
+    display: block;
+    max-height: 80vh;
+    background: #111;
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  /* Interactive scene gallery */
+
+  #gt-results .col-12 > b {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--sega-muted);
+  }
+
+  .thumbnail-strip-wrapper {
+    gap: 14px;
+    margin-top: 18px !important;
+  }
+
+  .thumbnail-row-custom {
+    gap: 18px;
+    padding: 4px 0 12px;
+  }
+
+  .thumbnail-btn-custom {
+    flex: 0 0 180px;
+    min-width: 0;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    padding: 0 0 10px;
+    text-align: left;
+    font-size: 12px;
+    color: var(--sega-muted);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .thumbnail-btn-custom img {
+    width: 100%;
+    height: 106px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+
+  .thumbnail-btn-custom:hover {
+    transform: none;
+    box-shadow: none;
+    color: #202024;
+    border-bottom-color: #cacace;
+  }
+
+  .thumbnail-btn-custom.active {
+    color: #202024;
+    border-bottom-color: var(--sega-red);
+    box-shadow: none;
+  }
+
+  .slide-arrow-custom {
+    width: 38px;
+    height: 44px;
+    border: 1px solid var(--sega-line);
+    border-radius: 2px;
+    background: #fff;
+    color: #202024;
+  }
+
+  .slide-arrow-custom:hover {
+    border-color: var(--sega-red);
+    color: #b92222;
+  }
+
+  .thumbnail-row-custom::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .thumbnail-row-custom::-webkit-scrollbar-thumb {
+    background: #c8c8cd;
+    border-radius: 0;
+  }
+
+  .scene-panel {
+    margin-top: 20px;
+  }
+
+  .scene-panel h4 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    padding: 16px 0;
+    border-top: 1px solid var(--sega-line);
+  }
+
+  .scene-panel h4 strong {
+    font-weight: 500;
+  }
+
+  .ply-viewer {
+    width: 100%;
+    height: clamp(340px, 47vw, 640px);
+    border: 1px solid var(--sega-line);
+    border-radius: 2px;
+    background: #f7f7f7;
+  }
+
+  .ply-viewer canvas {
+    display: block;
+  }
+
+  .instruction-text {
+    margin: 13px 0 0;
+    font-size: 12px !important;
+    line-height: 1.7 !important;
+    color: var(--sega-muted);
+    text-align: left;
+  }
+
+  .instruction-text b {
+    color: #343438;
+    font-weight: 500;
+  }
+
+  /* Additional results and credits */
+
+  #qualitative h3 strong {
+    display: block;
+  }
+
+  #qualitative h3 a {
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  #qualitative img {
+  display: block;
+  width: 80% !important;
+  max-width: 900px;
+  height: auto;
+  margin: 0 auto;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+@media (max-width: 700px) {
+  #qualitative img {
+    width: 100% !important;
+  }
+}
+
+  #qualitative p {
+    text-align: left !important;
+    font-size: 13px;
+    color: var(--sega-muted);
+  }
+
+  #contact,
+  #acknowledgement {
+    max-width: var(--sega-width);
+  }
+
+  #contact p,
+  #acknowledgement p {
+    max-width: 880px;
+    margin-left: 46px;
+    font-size: 15px;
+  }
+
+  #contact a,
+  #acknowledgement a {
+    text-decoration: underline;
+  }
+
+  footer {
+    width: calc(100% - 80px);
+    max-width: var(--sega-width);
+    margin: 65px auto 24px !important;
+    text-align: left !important;
+    font-size: 12px !important;
+    color: var(--sega-muted);
+  }
+
+  footer hr {
+    border-top: 1px solid var(--sega-line);
+    margin-bottom: 20px;
+  }
+
+  /* Tablet */
+
+  @media (max-width: 1000px) {
+    .sega-identity {
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 30px !important;
+    }
+
+    .sega-identity-mark .sega-word {
+      font-size: 86px;
+    }
+
+    .sega-identity-mark img {
+      width: 34px !important;
+      height: 34px !important;
+    }
+
+    .sega-authors,
+    .sega-affiliations,
+    .sega-actions {
+      margin-left: 210px !important;
+    }
+
+    #abstract .col-12 {
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 30px;
+    }
+  }
+
+  /* Mobile */
+
+  @media (max-width: 700px) {
+    .container,
+    .section-container,
+    .scene-section-container,
+    .table-section,
+    .jumbotron .container-fluid,
+    .sega-nav,
+    footer {
+      width: calc(100% - 36px);
+    }
+
+    .sega-nav {
+      min-height: 56px;
+      gap: 16px;
+    }
+
+    .sega-nav-links {
+      gap: 14px;
+      font-size: 11px;
+    }
+
+    .jumbotron {
+      padding-top: 34px !important;
+    }
+
+    .sega-identity {
+      grid-template-columns: 1fr;
+      gap: 24px !important;
+    }
+
+    .sega-identity-mark {
+      width: 174px;
+      padding-bottom: 10px;
+    }
+
+    .sega-identity-mark .sega-word {
+      font-size: 82px;
+    }
+
+    .sega-identity-mark img {
+      left: auto;
+      right: -52px;
+      bottom: 14px;
+    }
+
+    .sega-title {
+      font-size: 29px !important;
+      line-height: 1.22 !important;
+    }
+
+    .sega-authors,
+    .sega-affiliations,
+    .sega-actions {
+      margin-left: 0 !important;
+    }
+
+    .sega-authors {
+      font-size: 14px;
+      margin-top: 22px !important;
+    }
+
+    .sega-authors br {
+      display: none;
+    }
+
+    .sega-authors a {
+      display: inline;
+    }
+
+    .sega-affiliations span {
+      display: block;
+    }
+
+    .sega-affiliations {
+      font-size: 12px !important;
+    }
+
+    #main-video {
+      margin-top: 6px;
+      margin-bottom: 48px;
+    }
+
+    .sega-section {
+      margin-top: 52px;
+    }
+
+    .sega-section h3,
+    .sega-section > h4 {
+      gap: 12px;
+      font-size: 23px;
+    }
+
+    #abstract .col-12 {
+      display: block;
+    }
+
+    #abstract h3 {
+      margin-bottom: 22px;
+    }
+
+    .sega-section p {
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .thumbnail-strip-wrapper {
+      gap: 8px;
+    }
+
+    .thumbnail-btn-custom {
+      flex-basis: 144px;
+    }
+
+    .thumbnail-btn-custom img {
+      height: 86px;
+    }
+
+    .slide-arrow-custom {
+      width: 32px;
+    }
+
+    .ply-viewer {
+      height: 350px;
+    }
+
+    #contact p,
+    #acknowledgement p {
+      margin-left: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html,
+    .thumbnail-row-custom {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const title =
+      "Multi-View 3D Instance Segmentation with Geometry-Guided Association for Indoor Environments";
+
+    document.title = "SEGA: " + title;
+
+    document.querySelectorAll("span[style]").forEach(span => {
+      if (span.style.color === "rgb(214, 40, 40)") {
+        span.classList.add("sega-inline");
+      }
+    });
+
+    /* Recompose the existing paper header. */
+
+    const hero = document.querySelector(".jumbotron");
+    const heading = hero.querySelector(".sega-title");
+    const identity = heading.parentElement;
+
+    identity.classList.add("sega-identity");
+
+    heading.className = "sega-title";
+    heading.textContent = title;
+
+    const mark = document.createElement("div");
+    mark.className = "sega-identity-mark";
+
+    const word = document.createElement("span");
+    word.className = "sega-word";
+    word.textContent = "SEGA";
+
+    mark.append(word);
+
+    const logo = identity.querySelector("img");
+
+    if (logo) {
+      mark.append(logo);
+    }
+
+    identity.prepend(mark);
+
+    const authors = hero.querySelector(".sega-authors");
+    authors.classList.add("sega-authors");
+
+    
+
+    const affiliations = [...hero.querySelectorAll("div")].find(el =>
+      [...el.children].some(
+        child =>
+          child.tagName === "SPAN" &&
+          child.textContent.includes("University of Maryland")
+      )
+    );
+
+    if (affiliations) {
+      affiliations.classList.add("sega-affiliations");
+    }
+
+    hero
+      .querySelector(".row.justify-content-center")
+      .classList.add("sega-actions");
+
+    /* Preserve existing sections and add navigation anchors. */
+
+    const sections = [
+      ["Abstract", "abstract"],
+      ["SEGA", "method"],
+      ["3D Instance Segmentation Benchmark", "benchmark"],
+      ["Video", "video"],
+      ["SEGA Results on GT Point Cloud", "gt-results"],
+      ["More SEGA Qualitative Results", "qualitative"],
+      ["Contact", "contact"],
+      ["Acknowledgement", "acknowledgement"]
+    ];
+
+    const headings = [...document.querySelectorAll("h3, h4")];
+
+    sections.forEach(([label, id]) => {
+      const h = headings.find(el =>
+        el.textContent.trim().startsWith(label)
+      );
+
+      if (!h) return;
+
+      const container = h.closest(".container, .table-section");
+
+      container.id = id;
+      container.classList.add("sega-section");
+
+      if (id === "method") {
+        h.innerHTML = "<strong>The SEGA pipeline</strong>";
+      }
+    });
+
+    /* Preserve all benchmark values and existing best/second markings. */
+
+    document.querySelectorAll(".paper-table tbody tr").forEach(row => {
+      if (row.cells[0].textContent.includes("SEGA")) {
+        row.classList.add("sega-result");
+      }
+    });
+
+    const tableWrap = document.querySelector(".paper-table-wrap");
+
+    tableWrap.tabIndex = 0;
+    tableWrap.setAttribute("role", "region");
+    tableWrap.setAttribute(
+      "aria-label",
+      "3D instance segmentation benchmark. Scroll horizontally to see all metrics."
+    );
+
+    /* Compact section navigation. */
+
+    const nav = document.createElement("nav");
+
+    nav.className = "sega-nav";
+    nav.setAttribute("aria-label", "Project navigation");
+
+    nav.innerHTML = `
+      <a
+        class="sega-word"
+        href="#top"
+        aria-label="SEGA, back to top"
+      >SEGA</a>
+
+      <div class="sega-nav-links">
+        <a href="#method">Method</a>
+        <a href="#benchmark">Benchmark</a>
+        <a href="#gt-results">3D scenes</a>
+        <a href="quali/index.html">Qualitative ↗</a>
+      </div>
+    `;
+
+    document.body.id = "top";
+    document.body.prepend(nav);
+
+    /* Accessible labels for existing scene controls. */
+
+    document
+      .getElementById("thumb-prev")
+      .setAttribute("aria-label", "Previous scene thumbnails");
+
+    document
+      .getElementById("thumb-next")
+      .setAttribute("aria-label", "Next scene thumbnails");
+
+    /* Recalculate existing Three.js viewers after layout changes. */
+    window.dispatchEvent(new Event("resize"));
+  });
+</script>
+
+<!-- ================= END SEGA DESIGN ================= -->
+
+
+<!-- SEGA: revised main-page composition -->
+<style id="sega-main-refinement">
+
+  /* Keep the paper identity together. */
+
+  .jumbotron {
+    padding: 42px 0 22px !important;
+  }
+
+  .sega-identity {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center !important;
+    gap: 18px !important;
+    text-align: center;
+  }
+
+  .sega-identity-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+
+  .sega-identity-mark .sega-word {
+    font-family: "Anton", sans-serif;
+    font-size: clamp(68px, 7vw, 94px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0;
+    color: #ff3131;
+  }
+
+  /* Keep the existing logo, but place it inside the identity group. */
+
+  .sega-identity-mark img {
+    position: static;
+    order: -1;
+
+    width: 52px !important;
+    height: 52px !important;
+    margin: 0;
+
+    object-fit: contain;
+  }
+
+  .sega-title {
+    max-width: 1040px;
+    margin: 0 auto !important;
+
+    font-family: "Roboto", sans-serif;
+    font-size: clamp(26px, 3vw, 39px) !important;
+    font-weight: 700;
+    line-height: 1.28 !important;
+    letter-spacing: -0.015em;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  /* Preserve the requested title gradient. */
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .sega-title {
+      background: linear-gradient(90deg, #ff3131, #ff914d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  }
+
+  .sega-authors {
+    max-width: 1000px;
+    margin: 24px auto 0 !important;
+
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.85 !important;
+    text-align: center;
+  }
+
+  .sega-authors a {
+    border-bottom: 0;
+    color: #333338;
+    text-decoration: none;
+  }
+
+  .sega-authors a:hover {
+    color: #b92222;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .sega-affiliations {
+    max-width: 1000px;
+    margin: 12px auto 0 !important;
+
+    font-size: 14px !important;
+    line-height: 1.7;
+    text-align: center !important;
+  }
+
+  .sega-actions {
+    justify-content: center !important;
+    margin: 19px auto 0 !important;
+    gap: 10px;
+  }
+
+  .sega-actions .btn {
+    min-height: 38px;
+    padding: 8px 15px;
+    font-size: 13px;
+  }
+
+  /* Let the teaser follow the title without an oversized empty gap. */
+
+  #main-video {
+    max-width: 1180px;
+    margin-top: 24px;
+    margin-bottom: 52px;
+  }
+
+  /* Remove the repeated numbered-section treatment. */
+
+  .sega-section {
+    margin-top: 56px;
+  }
+
+  .sega-section h3,
+  .sega-section > h4 {
+    display: block;
+    margin: 0 0 23px;
+    padding: 0;
+    border: 0;
+
+    font-family: "Roboto", sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    text-align: center;
+  }
+
+  .sega-section h3::before,
+  .sega-section > h4::before {
+    content: none;
+    display: none;
+  }
+
+  .sega-section h3 strong,
+  .sega-section h4 strong {
+    font-weight: 600;
+  }
+
+  /* Abstract: one readable column. */
+
+  #abstract {
+    max-width: 860px;
+  }
+
+  #abstract .col-12 {
+    display: block;
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  #abstract h3 {
+    margin-bottom: 22px;
+  }
+
+  #abstract p {
+    max-width: none;
+    margin: 0;
+
+    font-size: 16px;
+    line-height: 1.85;
+    text-align: left !important;
+  }
+
+  /* Keep figures generous, explanatory text narrower. */
+
+  #method img {
+    max-width: 1120px;
+  }
+
+  #method p {
+    max-width: 860px;
+    margin: 23px auto 0;
+
+    font-size: 16px;
+    line-height: 1.85;
+  }
+
+  .paper-table-title {
+    max-width: 960px;
+    margin: 0 auto 20px;
+
+    font-size: 14px;
+    line-height: 1.7;
+    text-align: left;
+  }
+
+  #video {
+    max-width: 1120px;
+  }
+
+  /* Instructions belong close to the scene controls. */
+
+  #gt-results .col-12 > b {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+  }
+
+  #qualitative p {
+    text-align: center !important;
+  }
+
+  /* Credits: smaller typography and tighter spacing. */
+
+  #contact,
+  #acknowledgement {
+    max-width: 860px;
+  }
+
+  #contact {
+    margin-top: 48px;
+  }
+
+  #acknowledgement {
+    margin-top: 30px;
+  }
+
+  #contact h3,
+  #acknowledgement h3 {
+    margin-bottom: 10px;
+
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-align: left;
+  }
+
+  #contact p,
+  #acknowledgement p {
+    max-width: none;
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.8;
+    color: #55555d;
+  }
+
+  footer {
+    max-width: 860px;
+    margin-top: 32px !important;
+    font-size: 11px !important;
+  }
+
+  /* Mobile */
+
+  @media (max-width: 700px) {
+    .jumbotron {
+      padding-top: 30px !important;
+    }
+
+    .sega-identity {
+      gap: 16px !important;
+    }
+
+    .sega-identity-mark {
+      width: auto;
+      padding: 0;
+      gap: 12px;
+    }
+
+    .sega-identity-mark img {
+      position: static;
+      width: 40px !important;
+      height: 40px !important;
+    }
+
+    .sega-title {
+      font-size: 27px !important;
+      line-height: 1.3 !important;
+    }
+
+    .sega-authors {
+      margin: 20px auto 0 !important;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .sega-affiliations {
+      margin: 10px auto 0 !important;
+      font-size: 12px !important;
+    }
+
+    .sega-actions {
+      margin: 16px auto 0 !important;
+    }
+
+    #main-video {
+      margin-top: 16px;
+      margin-bottom: 40px;
+    }
+
+    .sega-section {
+      margin-top: 42px;
+    }
+
+    .sega-section h3,
+    .sega-section > h4 {
+      font-size: 23px;
+      margin-bottom: 20px;
+    }
+
+    #abstract p,
+    #method p {
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    #contact h3,
+    #acknowledgement h3 {
+      font-size: 16px;
+      margin-bottom: 9px;
+    }
+
+    #contact p,
+    #acknowledgement p {
+      font-size: 13px;
+    }
+  }
+</style>
+
+<!-- ========== SEGA: CONTROLS + BRAND TYPOGRAPHY ========== -->
+
+<style id="sega-controls-and-brand">
+
+  /* Every visible occurrence of SEGA */
+
+  .sega-brand-text {
+    font-family: "Anton", sans-serif !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: 0;
+
+    color: #ff3131 !important;
+    -webkit-text-fill-color: #ff3131 !important;
+    background: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Authors and affiliations */
+
+  .jumbotron .sega-authors {
+    max-width: 1120px;
+    font-size: 20px;
+    line-height: 1.9 !important;
+  }
+
+  .jumbotron .sega-affiliations {
+    max-width: 1120px;
+    font-size: 17px !important;
+    line-height: 1.8;
+  }
+
+  .sega-authors sup,
+  .sega-affiliations sup {
+    font-size: 12px;
+  }
+
+  /* arXiv and Code buttons */
+
+  .jumbotron .sega-actions {
+    gap: 14px;
+    margin-top: 24px !important;
+  }
+
+  .sega-actions .btn.sega-resource {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+
+    min-height: 48px;
+    padding: 11px 21px;
+
+    border: 1px solid transparent;
+    border-radius: 6px;
+
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: none;
+
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .sega-resource svg {
+    display: block;
+    width: 21px;
+    height: 21px;
+    flex: 0 0 21px;
+  }
+
+  .sega-actions a.btn.sega-resource {
+    background: #252529;
+    border-color: #252529;
+    color: #fff;
+  }
+
+  .sega-actions a.btn.sega-resource:hover {
+    background: #414148;
+    border-color: #414148;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .sega-actions a.btn.sega-resource:active {
+    transform: translateY(0);
+  }
+
+  .sega-actions button.btn.sega-resource:disabled {
+    background: #fff3ef;
+    border-color: #efb6ac;
+    color: #8c4035;
+    opacity: 1;
+    cursor: not-allowed;
+  }
+
+  /* Clickable scene previews */
+
+  #gt-results .thumbnail-strip-wrapper {
+    gap: 14px;
+  }
+
+  #gt-results .thumbnail-row-custom {
+    gap: 16px;
+    padding: 5px 2px 14px;
+  }
+
+  #gt-results .thumbnail-btn-custom {
+    flex: 0 0 210px;
+    min-width: 0;
+    padding: 8px;
+
+    border: 2px solid #d5d5da;
+    border-radius: 7px;
+    background: #fff;
+
+    color: #343438;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: none;
+
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease,
+      transform 150ms ease;
+  }
+
+  #gt-results .thumbnail-btn-custom img {
+    display: block;
+    width: 100%;
+    height: 115px;
+    margin: 0 0 11px;
+    object-fit: cover;
+    border-radius: 3px;
+  }
+
+  #gt-results .sega-scene-label {
+    display: block;
+    padding: 0 3px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #343438;
+  }
+
+  #gt-results .sega-scene-action {
+    display: block;
+    margin-top: 9px;
+    padding: 9px 3px 2px;
+    border-top: 1px solid #e8e8eb;
+
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: #a42525;
+  }
+
+  #gt-results .thumbnail-btn-custom:hover {
+    border-color: #ff3131;
+    background: #fffaf8;
+    transform: translateY(-2px);
+    box-shadow: none;
+  }
+
+  #gt-results .thumbnail-btn-custom.active {
+    border-color: #ff3131;
+    background: #fff1eb;
+    transform: none;
+    box-shadow: none;
+  }
+
+  #gt-results .thumbnail-btn-custom.active .sega-scene-action {
+    border-top-color: #efc7bd;
+    color: #9e2424;
+    font-weight: 700;
+  }
+
+  #gt-results .thumbnail-btn-custom:focus-visible {
+    outline: 3px solid #a42525;
+    outline-offset: 3px;
+  }
+
+  #gt-results .slide-arrow-custom {
+    width: 40px;
+    height: 48px;
+    border: 1px solid #bdbdc5;
+    border-radius: 5px;
+    background: #f5f5f6;
+    font-size: 25px;
+    cursor: pointer;
+  }
+
+  #gt-results .slide-arrow-custom:hover {
+    background: #fff1eb;
+    border-color: #ff3131;
+  }
+
+  /* Mobile */
+
+  @media (max-width: 700px) {
+    .jumbotron .sega-authors {
+      font-size: 17px;
+      line-height: 1.85 !important;
+    }
+
+    .jumbotron .sega-affiliations {
+      font-size: 15px !important;
+    }
+
+    .sega-authors sup,
+    .sega-affiliations sup {
+      font-size: 11px;
+    }
+
+    .jumbotron .sega-actions {
+      gap: 10px;
+    }
+
+    .sega-actions .btn.sega-resource {
+      min-height: 46px;
+      padding: 10px 15px;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    #gt-results .thumbnail-strip-wrapper {
+      gap: 8px;
+    }
+
+    #gt-results .thumbnail-btn-custom {
+      flex-basis: 164px;
+      padding: 7px;
+    }
+
+    #gt-results .thumbnail-btn-custom img {
+      height: 94px;
+    }
+
+    #gt-results .sega-scene-label {
+      font-size: 12px;
+    }
+
+    #gt-results .slide-arrow-custom {
+      width: 32px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #gt-results .thumbnail-btn-custom,
+    .sega-actions .btn.sega-resource {
+      transition: none;
+    }
+
+    #gt-results .thumbnail-btn-custom:hover,
+    .sega-actions a.btn.sega-resource:hover {
+      transform: none;
+    }
+  }
+
+</style>
+
+<script id="sega-controls-and-brand-script">
+  document.addEventListener("DOMContentLoaded", () => {
+
+    /* 1. Add icons to the existing resource buttons. */
+
+    const paperIcon = `
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <path d="M14 2v6h6"/>
+        <path d="M8 13h8M8 17h6"/>
+      </svg>
+    `;
+
+    const githubIcon = `
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M12 .75a11.25 11.25 0 0 0-3.558 21.923c.563.104.768-.244.768-.542 0-.267-.01-.974-.015-1.912-3.13.68-3.791-1.508-3.791-1.508-.512-1.3-1.25-1.646-1.25-1.646-1.023-.7.078-.686.078-.686 1.13.08 1.725 1.16 1.725 1.16 1.005 1.723 2.636 1.225 3.278.937.102-.728.394-1.225.715-1.507-2.499-.284-5.126-1.25-5.126-5.565 0-1.23.44-2.232 1.16-3.02-.116-.285-.503-1.43.11-2.98 0 0 .945-.303 3.094 1.154a10.8 10.8 0 0 1 5.625 0c2.148-1.457 3.092-1.154 3.092-1.154.615 1.55.228 2.695.112 2.98.722.788 1.158 1.79 1.158 3.02 0 4.326-2.631 5.278-5.138 5.556.404.35.764 1.043.764 2.1 0 1.517-.014 2.741-.014 3.113 0 .3.203.651.774.54A11.252 11.252 0 0 0 12 .75Z"/>
+      </svg>
+    `;
+
+    function setButtonIcon(button, icon) {
+      if (!button) return;
+
+      const originalLabel = button.textContent.trim();
+
+      button.classList.add("sega-resource");
+      button.innerHTML = icon;
+
+      const label = document.createElement("span");
+      label.textContent = originalLabel;
+      button.append(label);
+    }
+
+    setButtonIcon(
+      document.querySelector(".sega-actions button"),
+      paperIcon
+    );
+
+    setButtonIcon(
+      document.querySelector(".sega-actions a.btn"),
+      githubIcon
+    );
+
+    /*
+      2. Improve scene-selection labels.
+      Preserve the original buttons and their click listeners.
+    */
+
+    const gallery = document.querySelector("#gt-results");
+
+    if (gallery) {
+      const buttons = [
+        ...gallery.querySelectorAll(".thumbnail-btn-custom")
+      ];
+
+      buttons.forEach(button => {
+        if (button.querySelector(".sega-scene-action")) return;
+
+        const label = document.createElement("span");
+        label.className = "sega-scene-label";
+
+        [...button.childNodes].forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            label.append(node);
+          }
+        });
+
+        button.append(label);
+
+        const action = document.createElement("span");
+        action.className = "sega-scene-action";
+        button.append(action);
+      });
+
+      const updateSelection = () => {
+        buttons.forEach(button => {
+          const selected = button.classList.contains("active");
+
+          button.querySelector(".sega-scene-action").textContent =
+            selected ? "✓ Viewing" : "View scene →";
+
+          button.setAttribute("aria-pressed", String(selected));
+        });
+      };
+
+      updateSelection();
+
+      const observer = new MutationObserver(updateSelection);
+
+      buttons.forEach(button => {
+        observer.observe(button, {
+          attributes: true,
+          attributeFilter: ["class"]
+        });
+      });
+    }
+
+    /*
+      3. Apply Anton + #FF3131 to every visible SEGA occurrence.
+      URLs, filenames, scripts and the long paper title are unchanged.
+    */
+
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT
+    );
+
+    const textNodes = [];
+
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const parent = node.parentElement;
+
+      if (
+        !parent ||
+        parent.closest(
+          "script, style, noscript, textarea, svg, .sega-brand-text"
+        )
+      ) {
+        continue;
+      }
+
+      if (/\bSEGA\b/.test(node.nodeValue)) {
+        textNodes.push(node);
+      }
+    }
+
+    textNodes.forEach(node => {
+      const fragment = document.createDocumentFragment();
+      const parts = node.nodeValue.split(/(\bSEGA\b)/);
+
+      parts.forEach(part => {
+        if (part === "SEGA") {
+          const span = document.createElement("span");
+
+          span.className = "sega-brand-text";
+          span.textContent = "SEGA";
+
+          fragment.append(span);
+        } else {
+          fragment.append(document.createTextNode(part));
+        }
+      });
+
+      node.replaceWith(fragment);
+    });
+
+    window.dispatchEvent(new Event("resize"));
+  });
+</script>
+
+<!-- ========== END SEGA: CONTROLS + BRAND TYPOGRAPHY ========== -->
+
+
+<style id="sega-text-size">
+  /* SEGA trong đoạn văn và bảng */
+  p .sega-brand-text,
+  td .sega-brand-text,
+  .paper-table-title .sega-brand-text {
+    font-size: 1.15em;
+    line-height: 1;
+  }
+
+  /* SEGA trong tiêu đề nội dung */
+  .sega-section h3 .sega-brand-text,
+  .sega-section h4 .sega-brand-text {
+    font-size: 1.1em;
+    line-height: 1;
+  }
+</style>
+
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg?v=1">
+
+<!-- SEGA: section hierarchy and reading navigation -->
+<style id="sega-section-navigation">
+  :root {
+    --sega-nav-offset: 88px;
+  }
+
+  /* Main section spacing */
+
+  #abstract,
+  #method,
+  #benchmark,
+  #video,
+  #gt-results,
+  #qualitative {
+    margin-top: 76px;
+    scroll-margin-top: var(--sega-nav-offset);
+  }
+
+  /* Main headings */
+
+  #abstract h3,
+  #method h3,
+  #benchmark > h4,
+  #video h3,
+  #gt-results h3,
+  #qualitative h3 {
+    margin-bottom: 26px;
+    font-size: 32px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  #abstract h3 strong,
+  #method h3 strong,
+  #benchmark > h4 strong,
+  #video h3 strong,
+  #gt-results h3 strong,
+  #qualitative h3 strong {
+    font-weight: 600;
+  }
+
+  /* SEGA keeps its brand typography */
+
+  .sega-section h3 .sega-brand-text,
+  .sega-section h4 .sega-brand-text {
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    font-size: 1.1em;
+    line-height: 1;
+    color: #ff3131;
+    -webkit-text-fill-color: #ff3131;
+  }
+
+  /* Short titles with descriptive subtitles */
+
+  #gt-results h3,
+  #qualitative h3 {
+    margin-bottom: 10px;
+  }
+
+  #gt-results .sega-section-description,
+  #qualitative .sega-section-description {
+    max-width: 760px;
+    margin: 0 auto 28px;
+    font-family: "Roboto", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    font-weight: 400;
+    color: #626269;
+    text-align: center !important;
+  }
+
+  .sega-section-description a {
+    display: inline-block;
+    margin-left: 5px;
+    color: #a42525;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Credits retain a smaller heading level */
+
+  #contact h3,
+  #acknowledgement h3 {
+    font-size: 18px;
+    line-height: 1.4;
+  }
+
+  /* Sticky navigation */
+
+  .sega-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    min-height: 64px;
+    gap: 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e5e8;
+  }
+
+  .sega-nav > .sega-word {
+    flex: 0 0 auto;
+  }
+
+  .sega-nav-links {
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 22px;
+    min-width: 0;
+    margin-left: auto;
+    padding: 5px 3px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    font-size: 14px;
+  }
+
+  .sega-nav-links a {
+    flex: 0 0 auto;
+    padding: 10px 0 8px;
+    border-bottom: 2px solid transparent;
+    color: #626269;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .sega-nav-links a:hover {
+    color: #a42525;
+  }
+
+  .sega-nav-links a[aria-current="location"] {
+    color: #b92222;
+    border-bottom-color: #ff3131;
+  }
+
+  /* Mobile */
+
+  @media (max-width: 700px) {
+    #abstract,
+    #method,
+    #benchmark,
+    #video,
+    #gt-results,
+    #qualitative {
+      margin-top: 56px;
+    }
+
+    #abstract h3,
+    #method h3,
+    #benchmark > h4,
+    #video h3,
+    #gt-results h3,
+    #qualitative h3 {
+      margin-bottom: 22px;
+      font-size: 26px;
+      line-height: 1.35;
+    }
+
+    #gt-results h3,
+    #qualitative h3 {
+      margin-bottom: 10px;
+    }
+
+    #gt-results .sega-section-description,
+    #qualitative .sega-section-description {
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    #contact h3,
+    #acknowledgement h3 {
+      font-size: 17px;
+    }
+
+    .sega-nav {
+      min-height: 60px;
+      gap: 18px;
+    }
+
+    .sega-nav-links {
+      gap: 18px;
+      font-size: 13px;
+    }
+  }
+</style>
+
+<script id="sega-section-navigation-script">
+  document.addEventListener("DOMContentLoaded", () => {
+    const nav = document.querySelector(".sega-nav");
+    const links = nav?.querySelector(".sega-nav-links");
+
+    if (!nav || !links) return;
+
+    /* Complete the existing navigation. */
+
+    links.innerHTML = `
+      <a href="#abstract">Abstract</a>
+      <a href="#method">Method</a>
+      <a href="#benchmark">Benchmark</a>
+      <a href="#video">Video</a>
+      <a href="#gt-results">3D scenes</a>
+      <a href="quali/index.html">Qualitative ↗</a>
+    `;
+
+    /*
+      Move detailed result descriptions below the headings.
+      Preserve the existing qualitative-page link.
+    */
+
+    function refineHeading(id, title, description) {
+      const section = document.getElementById(id);
+      const heading = section?.querySelector("h3");
+
+      if (!heading) return;
+
+      const oldLink = heading.querySelector("a");
+      const resultLink = oldLink ? oldLink.cloneNode(true) : null;
+
+      heading.innerHTML = title;
+
+      const caption = document.createElement("p");
+      caption.className = "sega-section-description";
+      caption.textContent = description;
+
+      if (resultLink) {
+        resultLink.textContent = "View all scenes ↗";
+        caption.append(" ", resultLink);
+      }
+
+      heading.after(caption);
+    }
+
+    refineHeading(
+      "gt-results",
+      '<strong><span class="sega-brand-text">SEGA</span> 3D results</strong>',
+      "3D instance segmentation on ground-truth point clouds."
+    );
+
+    refineHeading(
+      "qualitative",
+      '<strong>More <span class="sega-brand-text">SEGA</span> qualitative results</strong>',
+      "3D instance segmentation on predicted point clouds."
+    );
+
+    /*
+      Track the current section.
+      Qualitative, Contact and Acknowledgement clear the
+      highlight because they have no matching in-page nav link.
+    */
+
+    const sections = [
+      "abstract",
+      "method",
+      "benchmark",
+      "video",
+      "gt-results",
+      "qualitative",
+      "contact",
+      "acknowledgement"
+    ]
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+
+    const anchors = [
+      ...links.querySelectorAll('a[href^="#"]')
+    ];
+
+    let frame = 0;
+    let currentId = null;
+
+    function updatePosition() {
+      frame = 0;
+
+      const navHeight = nav.getBoundingClientRect().height;
+
+      document.documentElement.style.setProperty(
+        "--sega-nav-offset",
+        `${Math.ceil(navHeight + 24)}px`
+      );
+
+      const readingLine = navHeight + 100;
+      let activeId = null;
+
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= readingLine) {
+          activeId = section.id;
+        }
+      }
+
+      if (activeId === currentId) return;
+
+      currentId = activeId;
+
+      anchors.forEach(anchor => {
+        const selected = anchor.hash === `#${activeId}`;
+
+        if (selected) {
+          anchor.setAttribute("aria-current", "location");
+
+          /*
+            Keep the active item visible in the horizontal
+            navigation on smaller screens.
+          */
+
+          const item = anchor.getBoundingClientRect();
+          const row = links.getBoundingClientRect();
+
+          if (item.left < row.left || item.right > row.right) {
+            links.scrollLeft +=
+              item.left -
+              row.left -
+              (row.width - item.width) / 2;
+          }
+        } else {
+          anchor.removeAttribute("aria-current");
+        }
+      });
+    }
+
+    function scheduleUpdate() {
+      if (!frame) {
+        frame = requestAnimationFrame(updatePosition);
+      }
+    }
+
+    window.addEventListener("scroll", scheduleUpdate, {
+      passive: true
+    });
+
+    window.addEventListener("resize", scheduleUpdate);
+
+    document.addEventListener("load", scheduleUpdate, true);
+
+    if (document.fonts) {
+      document.fonts.ready.then(scheduleUpdate);
+    }
+
+    scheduleUpdate();
+  });
+</script>
+<!-- END SEGA: section hierarchy and reading navigation -->
+
+<!-- SEGA: custom section icons -->
+<style id="sega-section-icons">
+  /* Center the icon and heading as one group. */
+
+  #abstract h3,
+  #method h3,
+  #benchmark > h4,
+  #video h3,
+  #gt-results h3,
+  #qualitative h3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  #abstract h3 > strong,
+  #method h3 > strong,
+  #benchmark > h4 > strong,
+  #video h3 > strong,
+  #gt-results h3 > strong,
+  #qualitative h3 > strong {
+    min-width: 0;
+  }
+
+  /* Shared drawing style */
+
+  .sega-section-icon {
+    display: block;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    overflow: visible;
+
+    fill: none;
+    stroke: #44444a;
+    stroke-width: 1.65;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    pointer-events: none;
+  }
+
+  .sega-section-icon .accent {
+    stroke: #ff3131;
+  }
+
+  .sega-section-icon .dot {
+    fill: #ff3131;
+    stroke: none;
+  }
+
+  @media (max-width: 700px) {
+    #abstract h3,
+    #method h3,
+    #benchmark > h4,
+    #video h3,
+    #gt-results h3,
+    #qualitative h3 {
+      gap: 10px;
+    }
+
+    .sega-section-icon {
+      flex-basis: 25px;
+      width: 25px;
+      height: 25px;
+    }
+  }
+</style>
+
+<script id="sega-section-icons-script">
+  function addSegaSectionIcons() {
+    const icons = {
+      /* Abstract: a spatial volume with connected points. */
+      abstract: `
+        <path d="
+          M16 3 28 10v13L16 30 4 23V10Z
+          M4 10l12 7 12-7
+          M16 17v13
+        "/>
+
+        <path class="accent" d="m10 13 6-3 6 3"/>
+
+        <circle class="dot" cx="16" cy="10" r="2"/>
+        <circle class="dot" cx="10" cy="13" r="1.5"/>
+        <circle class="dot" cx="22" cy="13" r="1.5"/>
+      `,
+
+      /* Method: local clusters associated into one output. */
+      method: `
+        <path d="M8 12v6h16v-6 M16 18v5"/>
+
+        <rect
+          x="2.5" y="3.5"
+          width="11" height="8.5"
+          rx="1.5"
+        />
+
+        <rect
+          x="18.5" y="3.5"
+          width="11" height="8.5"
+          rx="1.5"
+        />
+
+        <path class="accent" d="m13 21 3 3 3-3"/>
+
+        <rect
+          class="accent"
+          x="10.5" y="24"
+          width="11" height="6"
+          rx="1.5"
+        />
+      `,
+
+      /* Benchmark: results compared on a shared baseline. */
+      benchmark: `
+        <path d="
+          M3 28h27
+          M6 28V18h5v10
+          M14 28V12h5v16
+        "/>
+
+        <path class="accent" d="M22 28V5h5v23"/>
+
+        <path d="m5 10 6-5 5 2"/>
+      `,
+
+      /* Video: a simple frame with a red play symbol. */
+      video: `
+        <rect
+          x="3" y="6"
+          width="26" height="20"
+          rx="2"
+        />
+
+        <path d="
+          M3 10h26
+          M8 6v4
+          M13 6v4
+          M18 6v4
+          M23 6v4
+        "/>
+
+        <path class="accent" d="m13 14 8 4-8 4Z"/>
+      `,
+
+      /* 3D results: a volume divided into spatial regions. */
+      "gt-results": `
+        <path d="
+          m16 3 12 7v13l-12 7-12-7V10Z
+          M4 10l12 7 12-7
+          M16 17v13
+        "/>
+
+        <path class="accent" d="
+          m10 6.5 12 7v13
+          M22 6.5l-12 7v13
+        "/>
+      `,
+
+      /* Qualitative results: a collection of 3D scenes. */
+      qualitative: `
+        <path d="
+          M8 7V3h21v20h-4
+          M4 11V7h21v20h-4
+        "/>
+
+        <rect
+          x="2" y="11"
+          width="19" height="19"
+          rx="1.5"
+        />
+
+        <path class="accent" d="
+          m11.5 16 5 3v5l-5 3-5-3v-5Z
+          M6.5 19l5 3 5-3
+          M11.5 22v5
+        "/>
+      `
+    };
+
+    Object.entries(icons).forEach(([sectionId, drawing]) => {
+      const section = document.getElementById(sectionId);
+
+      if (!section) return;
+
+      const heading = section.querySelector(
+        sectionId === "benchmark" ? "h4" : "h3"
+      );
+
+      if (!heading || heading.querySelector(".sega-section-icon")) {
+        return;
+      }
+
+      const icon = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+      );
+
+      icon.setAttribute("class", "sega-section-icon");
+      icon.setAttribute("viewBox", "0 0 32 32");
+      icon.setAttribute("width", "30");
+      icon.setAttribute("height", "30");
+      icon.setAttribute("aria-hidden", "true");
+      icon.setAttribute("focusable", "false");
+
+      icon.innerHTML = drawing;
+      heading.prepend(icon);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      addSegaSectionIcons,
+      { once: true }
+    );
+  } else {
+    addSegaSectionIcons();
+  }
+</script>
+<!-- END SEGA: custom section icons -->
+
+</head>
+
+<body>
+  <section>
+    <div class="jumbotron text-center mt-0" style="padding: 40px 0;">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+          <div style="display:flex; align-items:center; justify-content:center; gap:24px;">
+
+           <h1 class="sega-title">
+  Multi-View 3D Instance Segmentation with Geometry-Guided Association for Indoor Environments
+</h1>
+          </div>
+            <br>
+            <hr>
+              <div class="sega-authors">
+                <a href="https://phucnda.github.io/">Phuc Nguyen</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
+                <a href="https://xiyichen.github.io/">Xiyi Chen</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
+                <a href="https://jdk9405.github.io/">Dongki Jung</a><sup>1</sup>
+                <br>
+                <a href="https://anshulrai.github.io/">Anshul Rai</a><sup>2</sup>&nbsp;&nbsp;&nbsp;
+                <a href="https://sites.google.com/site/wwwgmsu/">Guan-Ming Su</a><sup>2</sup>&nbsp;&nbsp;&nbsp;
+                <a href="https://scholar.google.com/citations?user=X08l_4IAAAAJ">Dinesh Manocha</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
+                <a href="https://scholar.google.com/citations?hl=en&user=ugFNit4AAAAJ&view_op=list_works&sortby=pubdate">Ming C. Lin</a><sup>1</sup>
+              </div>
+            <br>
+              <div style="text-align:center; font-size:18px; margin-bottom:12px;">
+                <span><sup>1</sup> University of Maryland, College Park</span>
+                &nbsp;&nbsp;&nbsp;
+                <span><sup>2</sup> Dolby Laboratories</span>
+              </div>
+
+            <div class="row justify-content-center">
+              <div class="column">
+                <p class="mb-5">
+                  <button class="btn btn-large btn-light" disabled>
+                    ArXiv (Coming Soon)
+                  </button>
+                </p>
+              </div>
+              <div class="column">
+                <p class="mb-5">
+                  <a class="btn btn-large btn-light" href="https://github.com/phucnda/scale3d" role="button" target="_blank">
+                    Code
+                  </a>
+                </p>
+              </div>
+            </div>
+            <!-- <div class="affiliation-logos">
+              <img src="images/umd_logo.png" alt="University of Maryland logo" class="affiliation-logo">
+              <img src="images/dolby_logo.jpg" alt="Dolby Laboratories logo" class="affiliation-logo">
+            </div> -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <br><br>
+  <section>
+    <div class="container section-container" id="main-video">
+      <div class="row">
+        <div class="col-12">
+          <div class="row justify-content-center" style="align-items: center; display: flex;">
+            <img src="images/teaser.png" width="100%" alt="SEGA teaser">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <br>
+
+  <section>
+    <div class="container section-container">
+      <div class="row">
+        <div class="col-12">
+          <h3><strong>Abstract</strong></h3>
+          <hr style="margin-top: 0px">
+          <p class="text-justify">
+  We present SEGA, a geometry-guided framework for 3D instance segmentation of indoor scenes from multi-view image sequences. Existing scene reconstruction and understanding methods typically prioritize either geometric reconstruction or object-level perception, struggling to maintain both globally consistent geometry and coherent instance identities across hundreds to thousands of views. Our key insight is that these objectives are mutually beneficial: geometry provides a robust basis for cross-view instance association, while instance-level perception supplies constraints for refining geometry. SEGA decomposes a long sequence into overlapping clusters, reconstructs local geometry, and predicts 2D instance masks within each cluster. We introduce a 3D-Aware Alignment module that aligns these local predictions with a global proxy geometry and associates instances across clusters, producing temporally coherent video segmentation with globally consistent instance identities. We then apply a post-processing step, Instance-Aware Bundle Adjustment, which uses instance-consistent correspondences to refine the scene geometry. Finally, the predicted video masks are lifted into 3D instance proposals using the reconstructed geometry. We evaluate SEGA on ScanNet200 and ScanNet++v2 across two tasks: class-agnostic 3D instance segmentation and panoptic lifting for novel-view rendering. SEGA achieves state-of-the-art performance, improving Average Precision and Panoptic Quality over the strongest baselines. These results demonstrate the benefits of jointly modeling geometry and instance-level perception for robust indoor scene understanding from long multi-view sequences.
+</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <br><br>
+
+  <section>
+    <div class="container section-container">
+      <div class="row">
+        <div class="col-12">
+          <h3><strong><b><span style="color: #d62828;">SEGA</span></b></strong></h3>
+          <hr style="margin-top: 0px">
+          <div style="text-align: center;">
+            <img src="images/pipeline.png" width="85%" alt="SEGA pipeline">
+          </div>
+          <br><br>
+          <p class="text-justify">
+            We decompose a given RGB video sequence into overlapping frame clusters and apply a geometric foundation model to obtain cluster-wise geometries and 2D segmentation masks. Our 3D-Aware Alignment module then aligns the fragmented cluster-wise predictions into a unified global proxy geometry and temporally consistent video object segmentation. These consistent 2D priors, together with the proxy geometry, are further used to refine the scene representation through Instance-Aware Bundle Adjustment. The final output is a globally consistent 3D reconstruction with temporally coherent, ID-consistent object segmentation.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <br><br>
+  
+  <section>
+  <div class="table-section">
+    <h4><strong>3D Instance Segmentation Benchmark</strong></h4>
+    <hr style="margin-top: 0px">
+    <div class="paper-table-title">
+      <strong>Table 1: 3D Class-Agnostic Instance Segmentation</strong> on ScanNet200 and ScanNet++v2.
+      We compare our method with prior 2D-to-3D lifting approaches under two settings:
+      without ground-truth (GT) geometry (top) and with ground-truth geometry (bottom).
+      The <strong>best</strong> and <span class="second">second best</span> results are marked as bold and underline.
+    </div>
+
+    <div class="paper-table-wrap">
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th rowspan="2">Method</th>
+            <th rowspan="2">GT<br>Geometry</th>
+            <th colspan="6" class="group-divider-left">ScanNet200</th>
+            <th colspan="6" class="group-divider-left">ScanNet++v2</th>
+          </tr>
+          <tr>
+            <th class="group-divider-left">AP↑</th>
+            <th>AP<sub>50</sub>↑</th>
+            <th>AP<sub>25</sub>↑</th>
+            <th>AR↑</th>
+            <th>RC<sub>50</sub>↑</th>
+            <th>RC<sub>25</sub>↑</th>
+
+            <th class="group-divider-left">AP↑</th>
+            <th>AP<sub>50</sub>↑</th>
+            <th>AP<sub>25</sub>↑</th>
+            <th>AR↑</th>
+            <th>RC<sub>50</sub>↑</th>
+            <th>RC<sub>25</sub>↑</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>1. Direct Lifting <span class="ref">[44]</span></td>
+            <td>×</td>
+            <td class="group-divider-left">1.6</td>
+            <td>3.5</td>
+            <td>8.9</td>
+            <td>4.9</td>
+            <td>7.2</td>
+            <td>13.1</td>
+
+            <td class="group-divider-left">0.3</td>
+            <td>0.9</td>
+            <td>1.4</td>
+            <td>3.5</td>
+            <td>4.6</td>
+            <td>5.9</td>
+          </tr>
+
+          <tr>
+            <td>2. SAM3D <span class="ref">[44, 39]</span></td>
+            <td>×</td>
+            <td class="group-divider-left">5.2</td>
+            <td>12.7</td>
+            <td>24.7</td>
+            <td>16.6</td>
+            <td class="second">33.3</td>
+            <td class="second">52.3</td>
+
+            <td class="group-divider-left">3.3</td>
+            <td>8.8</td>
+            <td>18.9</td>
+            <td>10.9</td>
+            <td>24.4</td>
+            <td class="second">43.4</td>
+          </tr>
+
+          <tr>
+            <td>3. Open3DIS <span class="ref">[1, 44]</span></td>
+            <td>×</td>
+            <td class="group-divider-left second">7.9</td>
+            <td class="second">18.3</td>
+            <td class="second">34.5</td>
+            <td class="second">17.3</td>
+            <td>32.1</td>
+            <td>47.3</td>
+
+            <td class="group-divider-left second">7.7</td>
+            <td class="second">16.5</td>
+            <td class="second">29.8</td>
+            <td class="second">14.2</td>
+            <td class="second">25.4</td>
+            <td>37.1</td>
+          </tr>
+
+          <tr>
+            <td>4. PanSt3R <span class="ref">[21]</span></td>
+            <td>×</td>
+            <td class="group-divider-left">2.1</td>
+            <td>4.2</td>
+            <td>11.1</td>
+            <td>5.6</td>
+            <td>10.3</td>
+            <td>16.1</td>
+
+            <td class="group-divider-left">1.5</td>
+            <td>2.9</td>
+            <td>5.7</td>
+            <td>5.2</td>
+            <td>8.9</td>
+            <td>10.6</td>
+          </tr>
+
+          <tr>
+            <td><span class="best"><b><span style="color: #d62828;">5. SEGA</span></b></span></td>
+            <td>×</td>
+            <td class="group-divider-left best">17.1</td>
+            <td class="best">32.7</td>
+            <td class="best">48.4</td>
+            <td class="best">30.8</td>
+            <td class="best">56.6</td>
+            <td class="best">79.4</td>
+
+            <td class="group-divider-left best">18.1</td>
+            <td class="best">33.8</td>
+            <td class="best">47.2</td>
+            <td class="best">32.3</td>
+            <td class="best">57.8</td>
+            <td class="best">76.7</td>
+          </tr>
+
+          <tr class="section-divider">
+            <td>6. Direct Lifting <span class="ref">[44]</span></td>
+            <td>✓</td>
+            <td class="group-divider-left">4.8</td>
+            <td>15.3</td>
+            <td>40.1</td>
+            <td>22.5</td>
+            <td>53.4</td>
+            <td>79.5</td>
+
+            <td class="group-divider-left">4.3</td>
+            <td>10.1</td>
+            <td>28.9</td>
+            <td>18.5</td>
+            <td>37.2</td>
+            <td>65.9</td>
+          </tr>
+
+          <tr>
+            <td>7. Felzenszwalb <span class="ref">[43]</span></td>
+            <td>✓</td>
+            <td class="group-divider-left">4.5</td>
+            <td>9.3</td>
+            <td>26.1</td>
+            <td>8.9</td>
+            <td>18.3</td>
+            <td>50.3</td>
+
+            <td class="group-divider-left">4.2</td>
+            <td>8.9</td>
+            <td>22.1</td>
+            <td>8.2</td>
+            <td>17.4</td>
+            <td>42.4</td>
+          </tr>
+
+          <tr>
+            <td>8. SAM3D <span class="ref">[44, 39]</span></td>
+            <td>✓</td>
+            <td class="group-divider-left">6.7</td>
+            <td>21.7</td>
+            <td>46.4</td>
+            <td>21.6</td>
+            <td>49.9</td>
+            <td>77.6</td>
+
+            <td class="group-divider-left">4.7</td>
+            <td>13.0</td>
+            <td>33.0</td>
+            <td>17.6</td>
+            <td>36.8</td>
+            <td>60.6</td>
+          </tr>
+
+          <tr>
+            <td>9. Open3DIS <span class="ref">[1, 44, 43]</span></td>
+            <td>✓</td>
+            <td class="group-divider-left second">29.1</td>
+            <td class="second">44.0</td>
+            <td class="second">49.1</td>
+            <td class="second">55.5</td>
+            <td class="second">83.2</td>
+            <td class="second">92.1</td>
+
+            <td class="group-divider-left second">21.8</td>
+            <td class="second">38.9</td>
+            <td class="second">46.5</td>
+            <td class="second">42.3</td>
+            <td class="second">75.1</td>
+            <td class="second">88.9</td>
+          </tr>
+
+          <tr>
+            <td>10. PanSt3R <span class="ref">[21, 43]</span></td>
+            <td>✓</td>
+            <td class="group-divider-left">9.9</td>
+            <td>28.4</td>
+            <td>48.1</td>
+            <td>20.1</td>
+            <td>45.2</td>
+            <td>69.9</td>
+
+            <td class="group-divider-left">8.2</td>
+            <td>25.3</td>
+            <td>40.1</td>
+            <td>24.7</td>
+            <td>49.9</td>
+            <td>72.1</td>
+          </tr>
+
+          <tr>
+            <td><span class="best"><b><span style="color: #d62828;">11. SEGA</span></b></span> <span class="ref">[43]</span></td>
+            <td>✓</td>
+            <td class="group-divider-left best">31.5</td>
+            <td class="best">48.2</td>
+            <td class="best">55.5</td>
+            <td class="best">58.6</td>
+            <td class="best">85.2</td>
+            <td class="best">93.1</td>
+
+            <td class="group-divider-left best">28.4</td>
+            <td class="best">43.9</td>
+            <td class="best">49.3</td>
+            <td class="best">54.2</td>
+            <td class="best">82.7</td>
+            <td class="best">92.1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </section>
+  <br><br>
+  
+  <section>
+  <div class="container section-container">
+    <div class="row">
+      <div class="col-12">
+        <h3><strong>Video</strong></h3>
+        <hr style="margin-top: 0px">
+
+        <div style="display:flex; justify-content:center;">
+          <video
+            width="95%"
+            controls
+            autoplay
+            muted
+            loop
+            playsinline
+            style="border-radius: 1px; border: 1px solid #dddddd; background: #000;"
+          >
+            <source src="images/SEGA webpage.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <br><br>
+  <section>
+    <div class="container scene-section-container">
+      <div class="row">
+        <div class="col-12">
+          <h3><strong><b><span style="color: #d62828;">SEGA</span></b> Results on GT Point Cloud</strong></h3>
+          <hr style="margin-top: 0px">
+          <b>Click the thumbnails below to select scenes.</b>
+
+          <div class="thumbnail-strip-wrapper mt-2">
+            <button class="slide-arrow-custom" id="thumb-prev">&#8249;</button>
+
+            <div class="thumbnail-row-custom" id="thumbnail-row">
+              <button class="thumbnail-btn-custom active" data-scene="scannetpp_0d2e">
+                <img src="images/thumbnails/0d2e.JPG" alt="ScanNet++ 0d2e thumbnail">
+                ScanNet++ 0d2e
+              </button>
+
+              <button class="thumbnail-btn-custom" data-scene="scannetpp_1ada">
+                <img src="images/thumbnails/1ada.JPG" alt="ScanNet++ 1ada thumbnail">
+                ScanNet++ 1ada
+              </button>
+
+              <button class="thumbnail-btn-custom" data-scene="scannetpp_3e8b">
+                <img src="images/thumbnails/3e8b.JPG" alt="ScanNet++ 3e8b thumbnail">
+                ScanNet++ 3e8b
+              </button>
+
+              <button class="thumbnail-btn-custom" data-scene="scannetpp_a24f">
+                <img src="images/thumbnails/a24f.JPG" alt="ScanNet++ a24f thumbnail">
+                ScanNet++ a24f
+              </button>
+            </div>
+
+            <button class="slide-arrow-custom" id="thumb-next">&#8250;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <br>
+
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+
+          <div class="scene-panel active" id="scannetpp_0d2e">
+            <h4><strong>3D Instance Segmentation on GT point cloud</strong></h4>
+            <div class="ply-viewer-wrapper">
+              <div class="ply-viewer" data-ply="ply/0d2ee665be_sega.ply"></div>
+            </div>
+            <p class="instruction-text">
+              <b>Left drag:</b> rotate &nbsp; | &nbsp;
+              <b>Right drag:</b> pan &nbsp; | &nbsp;
+              <b>Wheel / trackpad:</b> zoom
+            </p>
+          </div>
+
+          <div class="scene-panel" id="scannetpp_1ada">
+            <h4><strong>3D Instance Segmentation on GT point cloud</strong></h4>
+            <div class="ply-viewer-wrapper">
+              <div class="ply-viewer" data-ply="ply/1ada7a0617_sega.ply"></div>
+            </div>
+            <p class="instruction-text">
+              <b>Left drag:</b> rotate &nbsp; | &nbsp;
+              <b>Right drag:</b> pan &nbsp; | &nbsp;
+              <b>Wheel / trackpad:</b> zoom
+            </p>
+          </div>
+
+          <div class="scene-panel" id="scannetpp_3e8b">
+            <h4><strong>3D Instance Segmentation on GT point cloud</strong></h4>
+            <div class="ply-viewer-wrapper">
+              <div class="ply-viewer" data-ply="ply/3e8bba0176_sega.ply"></div>
+            </div>
+            <p class="instruction-text">
+              <b>Left drag:</b> rotate &nbsp; | &nbsp;
+              <b>Right drag:</b> pan &nbsp; | &nbsp;
+              <b>Wheel / trackpad:</b> zoom
+            </p>
+          </div>
+
+          <div class="scene-panel" id="scannetpp_a24f">
+            <h4><strong>3D Instance Segmentation on GT point cloud</strong></h4>
+            <div class="ply-viewer-wrapper">
+              <div class="ply-viewer" data-ply="ply/a24f64f7fb_sega.ply"></div>
+            </div>
+            <p class="instruction-text">
+              <b>Left drag:</b> rotate &nbsp; | &nbsp;
+              <b>Right drag:</b> pan &nbsp; | &nbsp;
+              <b>Wheel / trackpad:</b> zoom
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <br><br><br>
+  <!-- Qualit predicted PCL -->
+
+  <div class="container scene-section-container">
+    <div class="row">
+      <div class="col-12">
+        <h3><strong>More <b><span style="color: #d62828;">SEGA</span></b> Qualitative Results on Predicted Point Cloud (<a href="quali/index.html">Click Here</a>)</strong></h3>
+        <hr style="margin-top: 0px">
+
+        <div style="text-align:center; margin-top: 16px;">
+          <a href="quali/index.html">
+            <img
+              src="images/quali_pred.png"
+              alt="More qualitative results on predicted point cloud"
+              style="width: 85%; border: 1px solid #dddddd; border-radius: 10px;"
+            >
+          </a>
+        </div>
+
+        <p style="text-align:center; margin-top: 10px;">
+          Click the figure to view more qualitative results.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container section-container">
+    <div class="row">
+      <div class="col-12">
+        <h3><strong>Contact</strong></h3>
+        <hr style="margin-top: 0px">
+        <p>
+          Please feel free to contact
+          <a href="https://phucnda.github.io/">Phuc Nguyen</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container section-container">
+    <div class="row">
+      <div class="col-12">
+        <h3><strong>Acknowledgement</strong></h3>
+        <hr style="margin-top: 0px">
+        <p>
+          The source code is built upon  <a href="https://open3dis.github.io/">Open3DIS</a>, <a href="https://github.com/naver/panst3r">PanSt3R</a>, <a href="https://github.com/LeoChengKX/MERG3R">MERG3R</a> and <a href="https://github.com/lkeab/gaussian-grouping/tree/main">Gaussian Grouping</a>.
+          <br><br>
+          We thank Tuan Duc Ngo, Lojze Zust, Heechan Yoon, Ruohan Gao for early valuable discussions.
+          <br><br>
+          We thank Trinh Huynh for valuable help on the demo.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center" style="margin-bottom: 10px; font-size: medium;">
+    <hr>
+  </footer>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
+
+    const viewerStates = new Map();
+
+    function createControls(camera, renderer) {
+      const controls = new OrbitControls(camera, renderer.domElement);
+
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.12;
+
+      controls.rotateSpeed = 0.7;
+      controls.zoomSpeed = 1.6;
+      controls.panSpeed = 1.3;
+
+      controls.screenSpacePanning = true;
+      controls.enablePan = true;
+      controls.enableZoom = true;
+      controls.enableRotate = true;
+
+      controls.minDistance = 0.02;
+      controls.maxDistance = 1000;
+
+      controls.mouseButtons = {
+        LEFT: THREE.MOUSE.ROTATE,
+        MIDDLE: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.PAN
+      };
+
+      controls.touches = {
+        ONE: THREE.TOUCH.ROTATE,
+        TWO: THREE.TOUCH.DOLLY_PAN
+      };
+
+      return controls;
+    }
+
+    function initPLYViewer(container) {
+      if (!container) return;
+      if (viewerStates.has(container)) return;
+
+      const plyPath = container.dataset.ply;
+      if (!plyPath) return;
+
+      const width = Math.max(container.clientWidth, 1);
+      const height = Math.max(container.clientHeight, 1);
+
+      container.innerHTML = '<div class="viewer-loading">Loading 3D scene...</div>';
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf7f7f7);
+
+      const camera = new THREE.PerspectiveCamera(60, width / height, 0.001, 5000);
+      camera.position.set(0, 0, 3);
+
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: false
+      });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(width, height);
+
+      const controls = createControls(camera, renderer);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 1.45));
+
+      const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.0);
+      dirLight1.position.set(2, 2, 2);
+      scene.add(dirLight1);
+
+      const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.6);
+      dirLight2.position.set(-2, 1, -1);
+      scene.add(dirLight2);
+
+      const loader = new PLYLoader();
+
+      loader.load(
+        plyPath,
+        (geometry) => {
+          container.innerHTML = '';
+          container.appendChild(renderer.domElement);
+
+          geometry.computeBoundingBox();
+
+          const box = geometry.boundingBox;
+          const center = new THREE.Vector3();
+          box.getCenter(center);
+          geometry.translate(-center.x, -center.y, -center.z);
+
+          geometry.computeBoundingBox();
+          const size = new THREE.Vector3();
+          geometry.boundingBox.getSize(size);
+          const maxDim = Math.max(size.x, size.y, size.z);
+
+          let object;
+
+          if (geometry.hasAttribute('color')) {
+            object = new THREE.Points(
+              geometry,
+              new THREE.PointsMaterial({
+                size: Math.max(maxDim * 0.009, 0.009),
+                vertexColors: true
+              })
+            );
+          } else {
+            object = new THREE.Points(
+              geometry,
+              new THREE.PointsMaterial({
+                size: Math.max(maxDim * 0.009, 0.009),
+                color: 0x444444
+              })
+            );
+          }
+
+          scene.add(object);
+
+          const distance = Math.max(maxDim * 2.4, 3.0);
+          camera.position.set(distance * 0.55, distance * 0.35, distance);
+          camera.lookAt(0, 0, 0);
+
+          controls.target.set(0, 0, 0);
+          controls.update();
+
+          console.log('PLY loaded:', plyPath);
+        },
+        undefined,
+        (error) => {
+          console.error('Failed to load PLY:', plyPath, error);
+          container.innerHTML = '<div class="viewer-error">Failed to load ' + plyPath + '</div>';
+        }
+      );
+
+      function animate() {
+  if (!viewerStates.has(container)) return;
+
+  requestAnimationFrame(animate);
+
+  const panel = container.closest(".scene-panel");
+
+  // Skip rendering when the browser tab or scene is hidden.
+  if (
+    document.hidden ||
+    !panel ||
+    !panel.classList.contains("active")
+  ) {
+    return;
+  }
+
+  // Skip rendering when the viewer is outside the viewport.
+  const bounds = container.getBoundingClientRect();
+
+  if (
+    bounds.bottom <= 0 ||
+    bounds.top >= window.innerHeight ||
+    bounds.width <= 0 ||
+    bounds.height <= 0
+  ) {
+    return;
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+      viewerStates.set(container, {
+        camera,
+        renderer,
+        controls,
+        scene
+      });
+
+      animate();
+    }
+
+    function resizeViewer(container) {
+  const state = viewerStates.get(container);
+  if (!state) return;
+
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  // A hidden scene has no usable dimensions.
+  if (width <= 0 || height <= 0) return;
+
+  state.camera.aspect = width / height;
+  state.camera.updateProjectionMatrix();
+  state.renderer.setSize(width, height);
+}
+
+    function activateScene(sceneId) {
+      const sceneButtons = document.querySelectorAll('.thumbnail-btn-custom');
+      const scenePanels = document.querySelectorAll('.scene-panel');
+
+      sceneButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.scene === sceneId);
+      });
+
+      scenePanels.forEach((panel) => {
+        panel.classList.toggle('active', panel.id === sceneId);
+      });
+
+      const activePanel = document.getElementById(sceneId);
+      if (!activePanel) return;
+
+      const viewer = activePanel.querySelector('.ply-viewer');
+      if (viewer) {
+        initPLYViewer(viewer);
+        setTimeout(() => resizeViewer(viewer), 120);
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      viewerStates.forEach((_, container) => {
+        resizeViewer(container);
+      });
+    });
+
+    document.querySelectorAll('.thumbnail-btn-custom').forEach((button) => {
+      button.addEventListener('click', () => {
+        activateScene(button.dataset.scene);
+      });
+    });
+
+    const thumbnailRow = document.getElementById('thumbnail-row');
+    const prevBtn = document.getElementById('thumb-prev');
+    const nextBtn = document.getElementById('thumb-next');
+
+    if (prevBtn && nextBtn && thumbnailRow) {
+      prevBtn.addEventListener('click', () => {
+        thumbnailRow.scrollBy({ left: -220, behavior: 'smooth' });
+      });
+
+      nextBtn.addEventListener('click', () => {
+        thumbnailRow.scrollBy({ left: 220, behavior: 'smooth' });
+      });
+    }
+
+    const firstActivePanel = document.querySelector('.scene-panel.active');
+    if (firstActivePanel) {
+      const firstViewer = firstActivePanel.querySelector('.ply-viewer');
+      if (firstViewer) {
+        initPLYViewer(firstViewer);
+        setTimeout(() => resizeViewer(firstViewer), 120);
+      }
+    }
+  </script>
+
+<!-- SEGA: back to top -->
+<style>
+  #sega-back-to-top {
+    position: fixed;
+    right: max(24px, env(safe-area-inset-right));
+    bottom: max(24px, env(safe-area-inset-bottom));
+    z-index: 1100;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+
+    width: 48px;
+    height: 52px;
+    padding: 6px;
+    border: 1px solid #d5d5db;
+    border-radius: 6px;
+
+    background: #ffffff;
+    color: #44444a;
+    font-family: "Roboto", sans-serif;
+    cursor: pointer;
+
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  #sega-back-to-top[hidden] {
+    display: none;
+  }
+
+  #sega-back-to-top svg {
+    display: block;
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: #ff3131;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  #sega-back-to-top span {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  #sega-back-to-top:hover {
+    border-color: #ff3131;
+    background: #fff1eb;
+    color: #a42525;
+  }
+
+  #sega-back-to-top:focus-visible {
+    outline: 3px solid #a42525;
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 700px) {
+    #sega-back-to-top {
+      right: max(14px, env(safe-area-inset-right));
+      bottom: max(14px, env(safe-area-inset-bottom));
+      width: 44px;
+      height: 48px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #sega-back-to-top {
+      transition: none;
+    }
+  }
+</style>
+
+<button
+  id="sega-back-to-top"
+  type="button"
+  aria-label="Back to top"
+  title="Back to top"
+  hidden
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M12 19V5M5 12l7-7 7 7"/>
+  </svg>
+  <span aria-hidden="true">Top</span>
+</button>
+
+<script>
+  (() => {
+    const button = document.getElementById("sega-back-to-top");
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    );
+
+    function updateVisibility() {
+      const shouldHide = window.scrollY < 400;
+
+      if (button.hidden !== shouldHide) {
+        button.hidden = shouldHide;
+      }
+    }
+
+    button.addEventListener("click", () => {
+      const topLink = document.querySelector(".sega-nav > a");
+
+      if (topLink) {
+        topLink.focus({ preventScroll: true });
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: reducedMotion.matches ? "instant" : "smooth"
+      });
+    });
+
+    window.addEventListener("scroll", updateVisibility, {
+      passive: true
+    });
+
+    window.addEventListener("pageshow", updateVisibility);
+
+    updateVisibility();
+  })();
+</script>
+<!-- END SEGA: back to top -->
+
+</body>
+</html>

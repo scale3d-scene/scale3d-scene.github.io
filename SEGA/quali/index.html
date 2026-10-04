@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>SEGA — Qualitative Results</title>
+  <meta
+    name="description"
+    content="Explore SEGA qualitative results on 22 ScanNet++ scenes: scanned meshes and 3D instance segmentation on predicted point clouds."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root {
+      --red: #ff3131;
+      --ink: #242428;
+      --muted: #626269;
+      --line: #e5e5e8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: "Roboto", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    canvas:focus-visible,
+    .thumbnail-row:focus-visible {
+      outline: 3px solid #a42525;
+      outline-offset: 4px;
+    }
+
+    .wrap {
+      width: calc(100% - 80px);
+      max-width: 1280px;
+      margin-inline: auto;
+    }
+
+    .brand {
+      font-family: "Anton", sans-serif;
+      font-weight: 400;
+      color: var(--red);
+      letter-spacing: .015em;
+    }
+
+    /* Navigation */
+
+    .nav {
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav > .brand {
+      font-size: 25px;
+      text-decoration: none;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding-block: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      color: #a42525;
+    }
+
+    .back-link svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Page title */
+
+    .hero {
+      padding: 44px 0 32px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 3.6vw, 42px);
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    h1 .brand {
+      display: inline-block;
+      margin-right: .16em;
+      font-size: 1.2em;
+    }
+
+    .paper-title {
+      max-width: 820px;
+      margin: 18px auto 0;
+      color: #b92c2c;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.55;
+      text-wrap: balance;
+    }
+
+    @supports (background-clip: text) or (-webkit-background-clip: text) {
+      .paper-title {
+        background: linear-gradient(90deg, #ff3131, #ff914d);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* Scene selection */
+
+    .scene-picker {
+      margin-bottom: 30px;
+    }
+
+    .picker-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .picker-heading h2 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .picker-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .thumbnail-strip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .thumbnail-row {
+      display: flex;
+      flex: 1;
+      min-width: 0;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 6px 4px 14px;
+      scrollbar-width: thin;
+      scrollbar-color: #c4c4ca #f5f5f6;
+    }
+
+    .scene-button {
+      flex: 0 0 188px;
+      padding: 8px;
+      border: 2px solid #d5d5db;
+      border-radius: 6px;
+      background: #fff;
+      color: #343438;
+      text-align: left;
+      cursor: pointer;
+      transition:
+        border-color 150ms,
+        background-color 150ms,
+        transform 150ms;
+    }
+
+    .scene-button img {
+      display: block;
+      width: 100%;
+      height: 108px;
+      margin-bottom: 10px;
+      border-radius: 3px;
+      object-fit: cover;
+      background: #f5f5f6;
+    }
+
+    .scene-name {
+      display: block;
+      padding-inline: 3px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .scene-action {
+      display: block;
+      margin-top: 9px;
+      padding: 9px 3px 2px;
+      border-top: 1px solid #e8e8eb;
+      color: #a42525;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .scene-button:hover {
+      border-color: var(--red);
+      background: #fffaf8;
+      transform: translateY(-2px);
+    }
+
+    .scene-button[aria-pressed="true"] {
+      border-color: var(--red);
+      background: #fff1eb;
+      transform: none;
+    }
+
+    .scene-button[aria-pressed="true"] .scene-action {
+      border-color: #efc7bd;
+      color: #9e2424;
+      font-weight: 700;
+    }
+
+    .strip-arrow {
+      flex: 0 0 40px;
+      height: 48px;
+      padding: 0;
+      border: 1px solid #bdbdc5;
+      border-radius: 5px;
+      background: #f5f5f6;
+      color: var(--ink);
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .strip-arrow:hover {
+      border-color: var(--red);
+      background: #fff1eb;
+    }
+
+    /* Scene content */
+
+    .scene-panel {
+      margin-bottom: 58px;
+    }
+
+    .scene-panel[hidden] {
+      display: none;
+    }
+
+    .scene-heading {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .scene-heading h2 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 500;
+    }
+
+    .scene-id {
+      margin: 5px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .viewer-grid {
+      display: grid;
+      gap: 36px;
+    }
+
+    .viewer-card {
+      min-width: 0;
+      margin: 0;
+    }
+
+    .viewer-title {
+      margin: 0 0 12px;
+      text-align: center;
+      font-size: 19px;
+      font-weight: 500;
+    }
+
+    .viewer-title .brand {
+      font-size: 1.1em;
+    }
+
+    .ply-viewer {
+      position: relative;
+      width: min(100%, 1040px);
+      height: 560px;
+      margin-inline: auto;
+      overflow: hidden;
+      border: 1px solid #dddddf;
+      border-radius: 5px;
+      background: #f7f7f7;
+    }
+
+    .ply-viewer canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    .viewer-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      height: 100%;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .retry {
+      border: 1px solid #bdbdc5;
+      border-radius: 4px;
+      background: #fff;
+      padding: 8px 16px;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .retry:hover {
+      border-color: var(--red);
+    }
+
+    .instructions {
+      margin: 10px 0 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .instructions strong {
+      color: #44444a;
+      font-weight: 500;
+    }
+
+    .instructions span {
+      display: inline-block;
+      margin-inline: 6px;
+    }
+
+    .touch-help {
+      display: block;
+      margin-top: 3px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Smaller screens */
+
+    @media (max-width: 800px) {
+      .wrap {
+        width: calc(100% - 32px);
+      }
+
+      .hero {
+        padding: 30px 0 24px;
+      }
+
+      .paper-title {
+        font-size: 16px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      .thumbnail-strip {
+        gap: 8px;
+      }
+
+      .strip-arrow {
+        flex-basis: 30px;
+        height: 44px;
+      }
+
+      .scene-button {
+        flex-basis: 164px;
+        padding: 7px;
+      }
+
+      .scene-button img {
+        height: 94px;
+      }
+
+      .picker-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .scene-heading h2 {
+        font-size: 24px;
+      }
+
+      .viewer-title {
+        font-size: 17px;
+      }
+
+      .ply-viewer {
+        height: 400px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 .brand {
+        display: block;
+        margin: 0 0 6px;
+      }
+
+      .ply-viewer {
+        height: 340px;
+      }
+
+      .instructions {
+        font-size: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scene-button {
+        transition: none;
+      }
+
+      .scene-button:hover {
+        transform: none;
+      }
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
+      }
+    }
+  </script>
+
+<link rel="icon" type="image/svg+xml" href="../images/favicon.svg?v=1">
+
+</head>
+
+<body>
+  <nav class="nav wrap" aria-label="Project navigation">
+    <a
+      class="brand"
+      href="../index.html"
+      aria-label="SEGA project page"
+    >SEGA</a>
+
+    <a class="back-link" href="../index.html">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        aria-hidden="true"
+      >
+        <path d="m10 5-7 7 7 7M3 12h18"/>
+      </svg>
+      Back to main page
+    </a>
+  </nav>
+
+  <main class="wrap">
+    <header class="hero">
+      <h1>
+        <span class="brand">SEGA</span> Qualitative Results
+      </h1>
+
+      <p class="paper-title">
+        Multi-View 3D Instance Segmentation with Geometry-Guided
+        Association for Indoor Environments
+      </p>
+
+      <p class="subtitle">
+        3D scanned mesh and 3D instance segmentation on predicted point clouds.
+      </p>
+    </header>
+
+    <section class="scene-picker" aria-labelledby="picker-title">
+      <div class="picker-heading">
+        <h2 id="picker-title">Choose a scene</h2>
+        <p>22 ScanNet++ scenes · Click a thumbnail to switch</p>
+      </div>
+
+      <div class="thumbnail-strip">
+        <button
+          class="strip-arrow"
+          type="button"
+          id="thumb-prev"
+          aria-label="Previous scene thumbnails"
+          aria-controls="thumbnail-row"
+        >‹</button>
+
+        <div
+          class="thumbnail-row"
+          id="thumbnail-row"
+          tabindex="0"
+          role="group"
+          aria-label="Scene selection"
+        ></div>
+
+        <button
+          class="strip-arrow"
+          type="button"
+          id="thumb-next"
+          aria-label="Next scene thumbnails"
+          aria-controls="thumbnail-row"
+        >›</button>
+      </div>
+    </section>
+
+    <p class="sr-only" id="scene-announcement" role="status"></p>
+
+    <div id="scene-panels"></div>
+
+    <noscript>
+      <p>Please enable JavaScript to explore the interactive 3D scenes.</p>
+    </noscript>
+  </main>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
+
+    const SCENES = [
+      { short: '0d2e', full: '0d2ee665be', thumb: '../images/thumbnails/0d2e.JPG' },
+      { short: '1ada', full: '1ada7a0617', thumb: '../images/thumbnails/1ada.JPG' },
+      { short: '3e8b', full: '3e8bba0176', thumb: '../images/thumbnails/gt_3e8b.JPG' },
+      { short: '3f15', full: '3f15a9266d', thumb: '../images/thumbnails/gt_3f15.JPG' },
+      { short: '5ee7', full: '5ee7c22ba0', thumb: '../images/thumbnails/gt_5ee7.JPG' },
+      { short: '7b64', full: '7b6477cb95', thumb: '../images/thumbnails/gt_7b64.JPG' },
+      { short: '7bc2', full: '7bc286c1b6', thumb: '../images/thumbnails/gt_7bc2.JPG' },
+      { short: '31a2', full: '31a2c91c43', thumb: '../images/thumbnails/gt_31a2.JPG' },
+      { short: '40ae', full: '40aec5fffa', thumb: '../images/thumbnails/gt_40ae.JPG' },
+      { short: '45b0', full: '45b0dac5e3', thumb: '../images/thumbnails/gt_45b0.JPG' },
+      { short: '99fa', full: '99fa5c25e1', thumb: '../images/thumbnails/gt_99fa.JPG' },
+      { short: '286b', full: '286b55a2bf', thumb: '../images/thumbnails/gt_286b.JPG' },
+      { short: '825d', full: '825d228aec', thumb: '../images/thumbnails/gt_825d.JPG' },
+      { short: '5748', full: '5748ce6f01', thumb: '../images/thumbnails/gt_5748.JPG' },
+      { short: '9071', full: '9071e139d9', thumb: '../images/thumbnails/gt_9071.JPG' },
+      { short: '3864', full: '3864514494', thumb: '../images/thumbnails/gt_3864.JPG' },
+      { short: 'a24f', full: 'a24f64f7fb', thumb: '../images/thumbnails/gt_a24f.JPG' },
+      { short: 'a980', full: 'a980334473', thumb: '../images/thumbnails/gt_a980.JPG' },
+      { short: 'bcd2', full: 'bcd2436daf', thumb: '../images/thumbnails/gt_bcd2.JPG' },
+      { short: 'e398', full: 'e398684d27', thumb: '../images/thumbnails/gt_e398.JPG' },
+      { short: 'f2dc', full: 'f2dc06b1d2', thumb: '../images/thumbnails/gt_f2dc.JPG' },
+      { short: 'f9f9', full: 'f9f95681fd', thumb: '../images/thumbnails/gt_f9f9.JPG' }
+    ];
+
+    const thumbnailRow = document.getElementById('thumbnail-row');
+    const panelsRoot = document.getElementById('scene-panels');
+    const announcement = document.getElementById('scene-announcement');
+
+    const viewerStates = new Map();
+    const loader = new PLYLoader();
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
+
+    let activeSceneId = null;
+
+    const sceneId = scene => `scannetpp_gt_${scene.short}`;
+    const meshPath = scene => `../ply_gt/${scene.full}_mesh_aligned_0.05.ply`;
+    const predPath = scene => `../ply/debug_${scene.full}_pred_panoptic.ply`;
+
+    const instructions = `
+      <p class="instructions">
+        <span><strong>Left drag:</strong> rotate</span>
+        <span><strong>Right drag:</strong> pan</span>
+        <span><strong>Wheel / trackpad:</strong> zoom</span>
+        <small class="touch-help">
+          Touch: drag with one finger to rotate;
+          use two fingers to zoom or pan.
+        </small>
+      </p>
+    `;
+
+    /* Build all scene buttons and both viewers for each scene. */
+
+    function buildUI() {
+      thumbnailRow.innerHTML = SCENES.map(scene => `
+        <button
+          class="scene-button"
+          type="button"
+          data-scene="${sceneId(scene)}"
+          aria-pressed="false"
+          aria-controls="${sceneId(scene)}"
+        >
+          <img
+            src="${scene.thumb}"
+            alt=""
+            width="172"
+            height="108"
+            loading="lazy"
+            decoding="async"
+          >
+          <span class="scene-name">ScanNet++ ${scene.short}</span>
+          <span class="scene-action" aria-hidden="true">
+            View scene →
+          </span>
+        </button>
+      `).join('');
+
+      panelsRoot.innerHTML = SCENES.map(scene => `
+        <section
+          class="scene-panel"
+          id="${sceneId(scene)}"
+          aria-labelledby="title-${scene.short}"
+          hidden
+        >
+          <header class="scene-heading">
+            <h2 id="title-${scene.short}">
+              ScanNet++ ${scene.short}
+            </h2>
+            <p class="scene-id">Scene ID: ${scene.full}</p>
+          </header>
+
+          <div class="viewer-grid">
+            <figure class="viewer-card">
+              <figcaption
+                class="viewer-title"
+                id="mesh-${scene.short}"
+              >
+                3D Scanned Mesh
+              </figcaption>
+
+              <div
+                class="ply-viewer"
+                data-kind="mesh"
+                data-ply="${meshPath(scene)}"
+                role="group"
+                aria-labelledby="mesh-${scene.short}"
+              ></div>
+
+              ${instructions}
+            </figure>
+
+            <figure class="viewer-card">
+              <figcaption
+                class="viewer-title"
+                id="pred-${scene.short}"
+              >
+                <span class="brand">SEGA</span> ·
+                3D Instance Segmentation on Predicted Point Cloud
+              </figcaption>
+
+              <div
+                class="ply-viewer"
+                data-kind="pred"
+                data-ply="${predPath(scene)}"
+                role="group"
+                aria-labelledby="pred-${scene.short}"
+              ></div>
+
+              ${instructions}
+            </figure>
+          </div>
+        </section>
+      `).join('');
+    }
+
+    /* Preserve the original mouse and touch controls. */
+
+    function createControls(camera, canvas) {
+      const controls = new OrbitControls(camera, canvas);
+
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.12;
+      controls.rotateSpeed = 0.7;
+      controls.zoomSpeed = 1.6;
+      controls.panSpeed = 1.3;
+      controls.screenSpacePanning = true;
+      controls.minDistance = 0.02;
+      controls.maxDistance = 1000;
+
+      controls.mouseButtons = {
+        LEFT: THREE.MOUSE.ROTATE,
+        MIDDLE: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.PAN
+      };
+
+      controls.touches = {
+        ONE: THREE.TOUCH.ROTATE,
+        TWO: THREE.TOUCH.DOLLY_PAN
+      };
+
+      return controls;
+    }
+
+    function resizeViewer(container) {
+      const state = viewerStates.get(container);
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      if (!state || width <= 0 || height <= 0) return;
+
+      state.camera.aspect = width / height;
+      state.camera.updateProjectionMatrix();
+      state.renderer.setSize(width, height);
+    }
+
+    const resizeObserver = new ResizeObserver(entries => {
+      entries.forEach(entry => resizeViewer(entry.target));
+    });
+
+    /*
+      Release the previous scene and cancel unfinished downloads.
+      Only the selected scene keeps its two WebGL viewers.
+    */
+
+    function destroyViewer(container) {
+      const state = viewerStates.get(container);
+      if (!state) return;
+
+      viewerStates.delete(container);
+
+      state.abort.abort();
+      cancelAnimationFrame(state.frame);
+      resizeObserver.unobserve(container);
+
+      state.controls.dispose();
+      state.geometry?.dispose();
+      state.material?.dispose();
+      state.renderer.dispose();
+      state.renderer.forceContextLoss();
+
+      container.replaceChildren();
+      container.removeAttribute('aria-busy');
+    }
+
+    function showError(container, message) {
+      container.setAttribute('aria-busy', 'false');
+
+      const status = document.createElement('div');
+      status.className = 'viewer-status';
+      status.setAttribute('role', 'status');
+
+      const text = document.createElement('span');
+      text.textContent = message;
+
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.className = 'retry';
+      retry.textContent = 'Try again';
+
+      retry.addEventListener('click', () => initViewer(container));
+
+      status.append(text, retry);
+      container.replaceChildren(status);
+    }
+
+    async function initViewer(container) {
+      if (viewerStates.has(container)) return;
+
+      container.setAttribute('aria-busy', 'true');
+      container.innerHTML = `
+        <div class="viewer-status" role="status">
+          Loading 3D scene…
+        </div>
+      `;
+
+      const width = Math.max(container.clientWidth, 1);
+      const height = Math.max(container.clientHeight, 1);
+
+      let renderer;
+
+      try {
+        renderer = new THREE.WebGLRenderer({
+          antialias: true,
+          alpha: false
+        });
+      } catch (error) {
+        console.error('Unable to initialize 3D viewer:', error);
+
+        showError(
+          container,
+          'The 3D viewer could not start. Please try again or use another browser.'
+        );
+
+        return;
+      }
+
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      renderer.setSize(width, height);
+
+      renderer.domElement.tabIndex = 0;
+      renderer.domElement.setAttribute(
+        'aria-label',
+        'Interactive 3D view. Drag to rotate, right-drag to pan, and scroll to zoom.'
+      );
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf7f7f7);
+
+      const camera = new THREE.PerspectiveCamera(
+        60,
+        width / height,
+        0.001,
+        5000
+      );
+
+      camera.position.set(0, 0, 3);
+
+      const controls = createControls(camera, renderer.domElement);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 1.45));
+
+      const key = new THREE.DirectionalLight(0xffffff, 1.0);
+      key.position.set(2, 2, 2);
+
+      const fill = new THREE.DirectionalLight(0xffffff, 0.6);
+      fill.position.set(-2, 1, -1);
+
+      scene.add(key, fill);
+
+      const state = {
+        camera,
+        renderer,
+        controls,
+        scene,
+        abort: new AbortController(),
+        frame: 0,
+        geometry: null,
+        material: null,
+        object: null
+      };
+
+      viewerStates.set(container, state);
+      resizeObserver.observe(container);
+
+      function animate() {
+        if (viewerStates.get(container) !== state) return;
+
+        state.frame = requestAnimationFrame(animate);
+
+        if (
+          document.hidden ||
+          !state.object ||
+          container.closest('.scene-panel').hidden
+        ) {
+          return;
+        }
+
+        const bounds = container.getBoundingClientRect();
+
+        if (
+          bounds.bottom <= 0 ||
+          bounds.top >= window.innerHeight ||
+          bounds.width <= 0 ||
+          bounds.height <= 0
+        ) {
+          return;
+        }
+
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      try {
+        const response = await fetch(container.dataset.ply, {
+          signal: state.abort.signal
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const buffer = await response.arrayBuffer();
+
+        /*
+          Ignore a response if the user has already switched
+          away from this viewer.
+        */
+        if (viewerStates.get(container) !== state) return;
+
+        const geometry = loader.parse(buffer);
+        state.geometry = geometry;
+
+        if (!geometry.getAttribute('position')?.count) {
+          throw new Error('Empty geometry');
+        }
+
+        geometry.computeBoundingBox();
+
+        const center = geometry.boundingBox.getCenter(
+          new THREE.Vector3()
+        );
+
+        geometry.translate(-center.x, -center.y, -center.z);
+        geometry.computeBoundingBox();
+
+        const size = geometry.boundingBox.getSize(
+          new THREE.Vector3()
+        );
+
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const colored = geometry.hasAttribute('color');
+
+        if (
+          container.dataset.kind === 'mesh' &&
+          geometry.index?.count
+        ) {
+          geometry.computeVertexNormals();
+
+          state.material = new THREE.MeshStandardMaterial({
+            vertexColors: colored,
+            color: colored ? 0xffffff : 0xcccccc,
+            flatShading: false
+          });
+
+          state.object = new THREE.Mesh(
+            geometry,
+            state.material
+          );
+        } else {
+          state.material = new THREE.PointsMaterial({
+            size: Math.max(maxDim * 0.007, 0.007),
+            vertexColors: colored,
+            color: colored ? 0xffffff : 0x444444
+          });
+
+          state.object = new THREE.Points(
+            geometry,
+            state.material
+          );
+        }
+
+        scene.add(state.object);
+
+        const distance = Math.max(
+          maxDim * 2.4 / Math.min(camera.aspect, 1),
+          3
+        );
+
+        camera.position.set(
+          distance * 0.55,
+          distance * 0.35,
+          distance
+        );
+
+        camera.lookAt(0, 0, 0);
+        controls.target.set(0, 0, 0);
+        controls.update();
+
+        container.replaceChildren(renderer.domElement);
+        container.setAttribute('aria-busy', 'false');
+
+        resizeViewer(container);
+      } catch (error) {
+        if (viewerStates.get(container) !== state) return;
+
+        console.error(
+          'Failed to load PLY:',
+          container.dataset.ply,
+          error
+        );
+
+        destroyViewer(container);
+
+        showError(
+          container,
+          'This 3D scene could not be loaded. Please try again.'
+        );
+      }
+    }
+
+    function activateScene(id) {
+      if (id === activeSceneId) return;
+
+      const next = document.getElementById(id);
+      if (!next) return;
+
+      if (activeSceneId) {
+        const previous = document.getElementById(activeSceneId);
+
+        previous
+          .querySelectorAll('.ply-viewer')
+          .forEach(destroyViewer);
+
+        previous.hidden = true;
+      }
+
+      activeSceneId = id;
+      next.hidden = false;
+
+      thumbnailRow.querySelectorAll('.scene-button').forEach(button => {
+        const selected = button.dataset.scene === id;
+
+        button.setAttribute('aria-pressed', String(selected));
+
+        button.querySelector('.scene-action').textContent =
+          selected ? '✓ Viewing' : 'View scene →';
+      });
+
+      announcement.textContent =
+        `Showing ${next.querySelector('h2').textContent.trim()}.`;
+
+      next.querySelectorAll('.ply-viewer').forEach(initViewer);
+    }
+
+    buildUI();
+
+    thumbnailRow.addEventListener('click', event => {
+      const button = event.target.closest('.scene-button');
+
+      if (button) {
+        activateScene(button.dataset.scene);
+      }
+    });
+
+    function scrollThumbnails(direction) {
+      thumbnailRow.scrollBy({
+        left: direction * Math.max(
+          thumbnailRow.clientWidth * 0.75,
+          180
+        ),
+        behavior: reducedMotion.matches ? 'auto' : 'smooth'
+      });
+    }
+
+    document
+      .getElementById('thumb-prev')
+      .addEventListener('click', () => scrollThumbnails(-1));
+
+    document
+      .getElementById('thumb-next')
+      .addEventListener('click', () => scrollThumbnails(1));
+
+    activateScene(sceneId(SCENES[0]));
+  </script>
+</body>
+</html>

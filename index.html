@@ -2,1026 +2,1173 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Scale3D: Scalable 3D Reconstruction and Understanding</title>
 
-  <link href="css/bootstrap-4.4.1.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="css/index.css" />
+  <title>Scale3D — 3D Perception & Spatial Intelligence</title>
+
+  <meta
+    name="description"
+    content="Research on scaling 3D perception and spatial intelligence toward a richer, more coherent understanding of the physical world."
+  />
+
+  <!-- Fonts: online connection required; local fallbacks are provided. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Scale3D: three observations, one shared point. -->
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23ffffff'/%3E%3Cg fill='none' stroke='%23C44324' stroke-width='5'%3E%3Cpath d='M8 24V8h16M40 8h16v16M56 40v16H40'/%3E%3Cpath d='M10 10l22 22M54 10L32 32m22 22L32 32' stroke-width='3'/%3E%3C/g%3E%3Crect x='26' y='26' width='12' height='12' fill='%23C44324'/%3E%3C/svg%3E"
+  />
 
   <style>
+    /* =========================================================
+       SCALE3D / IDENTITY
 
-  .affiliation-logos {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 28px;
-    margin: 10px 0 18px 0;
-  }
+       Accent is reserved for the identity and interaction.
+       Research figures keep their original colors.
+       ========================================================= */
 
-  .affiliation-logo {
-    height: 34px;
-    width: auto;
-    object-fit: contain;
-    opacity: 0.95;
-  }
+    :root {
+      --paper: #ffffff;
+      --ink: #232629;
+      --secondary: #555c63;
+      --accent: #c44324;
+      --accent-soft: #fcf0ec;
+      --line: #d8dce0;
+      --surface: #f3f5f6;
 
-  @media (max-width: 800px) {
-    .affiliation-logos {
-      gap: 18px;
-      margin: 8px 0 14px 0;
+      --body-font: "Barlow", Arial, sans-serif;
+      --display-font: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+
+      --content-width: 1220px;
+      --gutter: clamp(22px, 5vw, 72px);
     }
 
-    .affiliation-logo {
-      height: 26px;
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
     }
-  }
-  .table-section {
-    width: 82%;
-    margin: 0 auto;
-  }
 
-  .paper-table-title {
-    font-size: 18px;
-    line-height: 1.35;
-    margin-bottom: 10px;
-  }
+    [hidden] {
+      display: none !important;
+    }
 
-  .paper-table-wrap {
-    overflow-x: auto;
-  }
+    html {
+      color: var(--ink);
+      background: var(--paper);
+      scroll-padding-top: 28px;
+    }
 
-  .paper-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 18px;
-    line-height: 1.2;
-    border-top: 3px solid #222;
-    border-bottom: 3px solid #222;
-  }
-
-  .paper-table th,
-  .paper-table td {
-    padding: 6px 10px;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .paper-table th:first-child,
-  .paper-table td:first-child {
-    text-align: left;
-  }
-
-  .paper-table thead tr:first-child th {
-    font-weight: 700;
-    border-bottom: 2px solid #777;
-  }
-
-  .paper-table thead tr:last-child th {
-    border-bottom: 2px solid #777;
-  }
-
-  .group-divider-left {
-    border-left: 3px solid #888;
-  }
-
-  .section-divider td {
-    border-top: 2px solid #888;
-    padding-top: 10px;
-  }
-
-  .best {
-    font-weight: 800;
-  }
-
-  .second {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  .ref {
-    border: 1px solid #6cc04a;
-    padding: 0 2px;
-    border-radius: 2px;
-  }    
     body {
-      background: #ffffff no-repeat fixed top left;
-      font-family: "Open Sans", sans-serif;
+      margin: 0;
+      font-family: var(--body-font);
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .section-container {
-      width: 70%;
-      margin: 0 auto;
+    ::selection {
+      color: var(--ink);
+      background: #f5cebf;
     }
 
-    .scene-section-container {
-      width: 100%;
-      margin: 0 auto;
+    a {
+      color: inherit;
+      text-underline-offset: 5px;
     }
 
-    .ply-viewer-wrapper {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin-bottom: 10px;
+    button {
+      font: inherit;
     }
 
-    .ply-viewer {
-      width: 100%;
-      height: 520px;
-      border: 1px solid #dddddd;
-      border-radius: 10px;
-      background: #f7f7f7;
-      overflow: hidden;
-      position: relative;
+    a,
+    button {
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .viewer-loading,
-    .viewer-error {
-      height: 100%;
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 5px;
+    }
+
+    .shell {
+      width: min(
+        var(--content-width),
+        calc(100% - var(--gutter) * 2)
+      );
+      margin-inline: auto;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 10;
+      top: 12px;
+      left: 12px;
+      padding: 10px 16px;
+      color: white;
+      background: var(--ink);
+      transform: translateY(-160%);
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    /* =========================================================
+       TOP LINE
+       ========================================================= */
+
+    .masthead {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: #666666;
+      justify-content: space-between;
+      gap: 24px;
+      padding-block: 23px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .masthead-topic {
+      margin: 0;
       font-size: 15px;
-      text-align: center;
-      padding: 20px;
+      font-weight: 500;
+      color: var(--secondary);
     }
 
-    .thumbnail-strip-wrapper {
+    .navigation {
       display: flex;
       align-items: center;
-      gap: 8px;
-      width: 100%;
-      overflow: hidden;
+      gap: 28px;
+      flex-shrink: 0;
     }
 
-    .thumbnail-row-custom {
+    .navigation a {
+      padding-block: 6px;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .navigation a:hover {
+      color: var(--accent);
+    }
+
+    /* =========================================================
+       IDENTITY / INTRODUCTION
+       ========================================================= */
+
+    .intro {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      align-items: center;
+      gap: clamp(32px, 5vw, 80px);
+      padding-block: clamp(48px, 7vw, 84px);
+    }
+
+    .identity {
       display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-      padding: 8px 0;
-      width: 100%;
+      align-items: center;
+      gap: clamp(17px, 2.5vw, 30px);
+      min-width: 0;
     }
 
-    .thumbnail-row-custom::-webkit-scrollbar {
-      height: 8px;
+    .identity-symbol {
+      width: clamp(58px, 7.5vw, 94px);
+      height: auto;
+      flex-shrink: 0;
+      color: var(--accent);
     }
 
-    .thumbnail-row-custom::-webkit-scrollbar-thumb {
-      background: #cccccc;
-      border-radius: 999px;
+    .identity h1 {
+      margin: 0;
+      font-family: var(--display-font);
+      font-size: clamp(72px, 9.4vw, 122px);
+      font-weight: 600;
+      letter-spacing: -0.035em;
+      line-height: 0.95;
     }
 
-    .thumbnail-btn-custom {
-      border: 1px solid #dddddd;
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 8px;
-      min-width: 170px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: center;
+    .intro-copy {
+      max-width: 440px;
+      margin: 0;
+      font-size: clamp(20px, 2.1vw, 26px);
+      font-weight: 400;
+      line-height: 1.42;
+      text-wrap: pretty;
+    }
+
+    /* =========================================================
+       RESEARCH COLLECTION
+       ========================================================= */
+
+    .collection {
+      padding-bottom: 76px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+      padding-block: 18px;
+      margin-bottom: 18px;
+      border-top: 2px solid var(--ink);
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .collection-note {
+      margin: 0;
+      font-size: 15px;
+      color: var(--secondary);
+    }
+
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 42px;
+      row-gap: 48px;
+    }
+
+    .work {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .work-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+
+    .work-title {
+      margin: 0;
+      font-family: var(--display-font);
+      font-size: clamp(36px, 4vw, 46px);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+    }
+
+    .work-title a {
+      text-decoration: none;
+      transition: color 160ms ease;
+    }
+
+    .work-title a:hover {
+      color: var(--accent);
+    }
+
+    .work-venue {
+      max-width: 46%;
+      margin: 0;
+      color: var(--secondary);
       font-size: 14px;
+      line-height: 1.4;
+      text-align: right;
     }
 
-    .thumbnail-btn-custom:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    /* =========================================================
+       MEDIA
+
+       All media is contained, never cropped.
+       Registration corners echo the logo.
+       ========================================================= */
+
+    .media-frame {
+      position: relative;
+      isolation: isolate;
+      margin: 0;
+      background: var(--surface);
     }
 
-    .thumbnail-btn-custom.active {
-      border-color: #999999;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-    }
-
-    .thumbnail-btn-custom img {
+    .media-stage {
+      position: relative;
       width: 100%;
-      height: 95px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 6px;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    .media-stage::before,
+    .media-stage::after {
+      content: "";
+      position: absolute;
+      z-index: 3;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+      border-color: var(--accent);
+      border-style: solid;
+      transition: width 180ms ease, height 180ms ease;
+    }
+
+    .media-stage::before {
+      top: 0;
+      left: 0;
+      border-width: 2px 0 0 2px;
+    }
+
+    .media-stage::after {
+      bottom: 0;
+      right: 0;
+      border-width: 0 2px 2px 0;
+    }
+
+    .work:focus-within .media-stage::before,
+    .work:focus-within .media-stage::after {
+      width: 27px;
+      height: 27px;
+    }
+
+    @media (hover: hover) {
+      .work:hover .media-stage::before,
+      .work:hover .media-stage::after {
+        width: 27px;
+        height: 27px;
+      }
+    }
+
+    .media-stage img,
+    .media-stage video {
+      position: relative;
+      z-index: 2;
       display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: white;
+      opacity: 0;
     }
 
-    .slide-arrow-custom {
-      border: none;
-      background: #f3f3f3;
-      border-radius: 999px;
-      width: 40px;
-      height: 40px;
-      font-size: 22px;
-      cursor: pointer;
-      flex: 0 0 auto;
+    .media-stage img {
+      padding: 16px;
     }
 
-    .scene-panel {
-      display: none;
-      margin-top: 20px;
+    .media-stage.is-ready img,
+    .media-stage.is-ready video {
+      opacity: 1;
     }
 
-    .scene-panel.active {
+    .media-stage a {
+      position: relative;
+      z-index: 2;
       display: block;
+      width: 100%;
+      height: 100%;
     }
 
-    .instruction-text {
+    .media-stage a:focus-visible {
+      outline-offset: -6px;
+    }
+
+    .media-fallback {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      padding: 30px;
       text-align: center;
-      margin-top: 10px;
+      background: var(--surface);
+    }
+
+    .media-fallback strong {
+      font-family: var(--display-font);
+      font-size: 42px;
+      font-weight: 500;
+      line-height: 1.1;
+    }
+
+    .media-fallback span {
+      color: var(--secondary);
       font-size: 15px;
     }
 
-    @media (max-width: 900px) {
-      .section-container {
-        width: 92%;
+    .media-stage.is-ready .media-fallback {
+      display: none;
+    }
+
+    .media-caption {
+      padding: 9px 12px 10px;
+      color: var(--secondary);
+      border: 1px solid var(--line);
+      border-top: 0;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    /* =========================================================
+       PAPER INFORMATION
+       ========================================================= */
+
+    .work-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding-top: 20px;
+    }
+
+    .work-focus {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.3;
+      font-weight: 600;
+      letter-spacing: -0.35px;
+      text-wrap: pretty;
+    }
+
+    .work-description {
+      margin: 10px 0 20px;
+      max-width: 53ch;
+      color: var(--secondary);
+      font-size: 17px;
+      line-height: 1.6;
+      text-wrap: pretty;
+    }
+
+    .work-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 22px;
+      margin-top: auto;
+      padding-top: 2px;
+    }
+
+    .work-links:empty {
+      display: none;
+    }
+
+    .work-links a {
+      padding-block: 6px;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration-thickness: 1px;
+      text-decoration-color: #a9afb5;
+    }
+
+    .work-links a:first-child {
+      color: var(--accent);
+      text-decoration-color: #dca08f;
+    }
+
+    .work-links a:hover {
+      color: var(--accent);
+      text-decoration-color: currentColor;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding-block: 25px 34px;
+      border-top: 2px solid var(--ink);
+      font-size: 15px;
+    }
+
+    .footer-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .footer-symbol {
+      width: 25px;
+      height: 25px;
+      color: var(--accent);
+    }
+
+    .footer-brand span {
+      font-family: var(--display-font);
+      font-size: 25px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 24px;
+    }
+
+    .footer-links a {
+      color: var(--secondary);
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 950px) {
+      .intro {
+        grid-template-columns: 1fr;
+        gap: 30px;
       }
 
-      .ply-viewer {
-        width: 100%;
-        height: 360px;
+      .intro-copy {
+        max-width: 650px;
+      }
+
+      .works-grid {
+        column-gap: 28px;
       }
     }
+
+    @media (max-width: 650px) {
+      .masthead {
+        align-items: flex-start;
+        gap: 16px;
+        padding-block: 18px;
+      }
+
+      .masthead-topic {
+        max-width: 180px;
+        font-size: 14px;
+      }
+
+      .navigation {
+        gap: 18px;
+      }
+
+      .navigation a {
+        font-size: 14px;
+      }
+
+      .intro {
+        padding-block: 44px;
+        gap: 25px;
+      }
+
+      .identity {
+        gap: 17px;
+      }
+
+      .identity-symbol {
+        width: 54px;
+      }
+
+      .identity h1 {
+        font-size: clamp(62px, 16vw, 92px);
+      }
+
+      .intro-copy {
+        max-width: 34ch;
+        font-size: 21px;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+      }
+
+      .collection-note {
+        display: none;
+      }
+
+      .works-grid {
+        grid-template-columns: 1fr;
+        row-gap: 34px;
+      }
+
+      .work-title {
+        font-size: 40px;
+      }
+
+      .media-stage {
+        aspect-ratio: 4 / 3;
+      }
+
+      .media-stage img {
+        padding: 12px;
+      }
+
+      .collection {
+        padding-bottom: 45px;
+      }
+
+      .footer {
+        align-items: flex-start;
+      }
+
+      .footer-links {
+        justify-content: flex-end;
+        gap: 8px 18px;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .masthead-topic {
+        max-width: 130px;
+      }
+
+      .navigation {
+        gap: 12px;
+      }
+
+      .identity-symbol {
+        width: 44px;
+      }
+
+      .identity {
+        gap: 13px;
+      }
+
+      .identity h1 {
+        font-size: 60px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    /* Video 1920 × 1080: giữ khung 16:9 trên desktop và mobile */
+.media-stage.media-stage--video {
+  aspect-ratio: 16 / 9;
+}
+
+.media-stage.media-stage--video video {
+  padding: 0;
+  object-fit: contain;
+}
+/* Conference labels */
+.work-heading {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+
+.work-venue {
+  max-width: 100%;
+  margin: 0;
+  padding: 5px 10px;
+
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* Footer and acknowledgement */
+.footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 16px 24px;
+}
+
+.footer-links {
+  justify-content: flex-end;
+}
+
+.footer-credit {
+  grid-column: 1 / -1;
+  max-width: 75ch;
+  margin: 0;
+
+  color: var(--secondary);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.footer-credit span {
+  color: var(--ink);
+  font-weight: 600;
+}
   </style>
-
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
-    }
-  }
-  </script>
 </head>
 
-<body>
-  <section>
-    <div class="jumbotron text-center mt-0" style="padding: 40px 0;">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col">
-          <div style="display:flex; align-items:center; justify-content:center; gap:24px;">
-            <img
-              src="images/scale3d_logo.png"
-              alt="Scale3D logo"
-              style="width:90px; height:90px; object-fit:contain;"
-            />
+<body id="top">
+  <a class="skip-link" href="#works">Skip to research</a>
 
-            <h2 style="font-size: 40px; line-height: 1.2; margin: 0;">
-              <b><span style="color: #d62828;">Scale3D</span></b><br>
-              <b>Scalable 3D Reconstruction and Understanding</b>
-            </h2>
-          </div>
-            <br>
-            <hr>
-              <h5 style="line-height: 1.8; margin-bottom: 0;">
-                <a href="https://phucnda.github.io/">Phuc Nguyen</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
-                <a href="https://xiyichen.github.io/">Xiyi Chen</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
-                <a href="https://jdk9405.github.io/">Dongki Jung</a><sup>1</sup>
-                <br>
-                <a href="https://anshulrai.github.io/">Anshul Rai</a><sup>2</sup>&nbsp;&nbsp;&nbsp;
-                <a href="https://sites.google.com/site/wwwgmsu/">Guan-Ming Sun</a><sup>2</sup>&nbsp;&nbsp;&nbsp;
-                <a href="https://scholar.google.com/citations?user=X08l_4IAAAAJ">Dinesh Manocha</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
-                <a href="https://scholar.google.com/citations?hl=en&user=ugFNit4AAAAJ&view_op=list_works&sortby=pubdate">Ming C. Lin</a><sup>1</sup>
-              </h5>
-            <br>
-              <div style="text-align:center; font-size:18px; margin-bottom:12px;">
-                <span><sup>1</sup> University of Maryland, College Park</span>
-                &nbsp;&nbsp;&nbsp;
-                <span><sup>2</sup> Dolby Laboratories</span>
-              </div>
+  <!-- Reusable proposed Scale3D brand mark. -->
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="0"
+    height="0"
+    aria-hidden="true"
+    style="position:absolute; overflow:hidden"
+  >
+    <defs>
+      <symbol id="scale3d-mark" viewBox="0 0 64 64">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="square"
+          stroke-linejoin="miter"
+        >
+          <path
+            d="M8 24V8h16 M40 8h16v16 M56 40v16H40"
+            stroke-width="5"
+          />
 
-            <div class="row justify-content-center">
-              <div class="column">
-                <p class="mb-5">
-                  <button class="btn btn-large btn-light" disabled>
-                    <i class="fa fa-file"></i> ArXiv (Coming Soon)
-                  </button>
-                </p>
-              </div>
-              <div class="column">
-                <p class="mb-5">
-                  <a class="btn btn-large btn-light" href="https://github.com/phucnda/scale3d" role="button" target="_blank">
-                    <i class="fa fa-github-alt"></i> Code
-                  </a>
-                </p>
-              </div>
-            </div>
-            <!-- <div class="affiliation-logos">
-              <img src="images/umd_logo.png" alt="University of Maryland logo" class="affiliation-logo">
-              <img src="images/dolby_logo.jpg" alt="Dolby Laboratories logo" class="affiliation-logo">
-            </div> -->
+          <path
+            d="M10 10l22 22 M54 10L32 32 M54 54L32 32"
+            stroke-width="2.5"
+          />
+        </g>
 
-          </div>
+        <rect
+          x="26"
+          y="26"
+          width="12"
+          height="12"
+          fill="currentColor"
+        />
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="shell">
+    <header class="masthead">
+      <p class="masthead-topic">
+        3D perception &amp; spatial intelligence
+      </p>
+
+      <nav class="navigation" aria-label="Main navigation">
+        <a href="#works">Research</a>
+        <a href="https://phucnda.github.io/">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="site-title">
+        <div class="identity">
+          <svg class="identity-symbol" aria-hidden="true">
+            <use href="#scale3d-mark"></use>
+          </svg>
+
+          <h1 id="site-title">Scale3D</h1>
         </div>
-      </div>
-    </div>
-  </section>
-  
-  <br><br>
-  <section>
-    <div class="container section-container" id="main-video">
-      <div class="row">
-        <div class="col-12">
-          <div class="row justify-content-center" style="align-items: center; display: flex;">
-            <img src="images/teaser.png" width="100%" alt="Scale3D teaser">
-          </div>
+
+        <p class="intro-copy">
+          Scaling 3D perception and spatial intelligence
+          toward a richer, more coherent understanding
+          of the physical world.
+        </p>
+      </section>
+
+      <section
+        class="collection"
+        id="works"
+        aria-labelledby="works-title"
+      >
+        <div class="section-heading">
+          <h2 id="works-title">Highlighted works</h2>
+          <p class="collection-note">Geometry, objects and semantics</p>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <br>
+        <div class="works-grid" id="works-grid"></div>
 
-  <section>
-    <div class="container section-container">
-      <div class="row">
-        <div class="col-12">
-          <h3><strong>Abstract</strong></h3>
-          <hr style="margin-top: 0px">
-          <p class="text-justify">
-            We present <b><span style="color: #d62828;">Scale3D</span></b>, a unified framework for scalable 3D reconstruction and scene understanding from complex and long image sequences. Existing methods typically emphasize either geometric reconstruction or object-level understanding, but struggle to maintain both global geometric consistency and coherent instance identities over hundreds to thousands of views. Our key insight is to exploit their mutual synergy: geometry provides a robust basis for cross-view object association, while perception regularizes and refines geometry. Scale3D decomposes long video into overlapping clusters, reconstructs cluster-wise geometry and 2D segmentation masks, and introduces a 3D-Aware Alignment module to align local predictions into a global proxy geometry while recovering temporally coherent, globally ID-consistent video object segmentation. We further propose Instance-Aware Bundle Adjustment, leveraging dense instance-consistent correspondences to refine the camera poses and geometry. We evaluate Scale3D on ScanNet200 and ScanNet++v2 across three different benchmarking tasks: 3D reconstruction, class-agnostic 3D instance segmentation, and panoptic lifting for novel-view rendering. It achieves state-of-the-art results, improving AUC@30 by 5%, AP by 11%, and Panoptic Quality by 10%. Overall, our results highlight the importance of jointly modeling geometry and perception for scalable scene reconstruction and understanding over long image sequences with hundreds to thousands of views.
+        <noscript>
+          <p>
+            Please enable JavaScript to display the research collection.
           </p>
-        </div>
-      </div>
-    </div>
-  </section>
+        </noscript>
+      </section>
+    </main>
 
-  <br><br>
+    <footer class="footer">
+  <a class="footer-brand" href="#top" aria-label="Scale3D home">
+    <svg class="footer-symbol" aria-hidden="true">
+      <use href="#scale3d-mark"></use>
+    </svg>
+    <span>Scale3D</span>
+  </a>
 
-  <section>
-    <div class="container section-container">
-      <div class="row">
-        <div class="col-12">
-          <h3><strong><b><span style="color: #d62828;">Scale3D</span></b></strong></h3>
-          <hr style="margin-top: 0px">
-          <div style="text-align: center;">
-            <img src="images/pipeline.png" width="85%" alt="Scale3D pipeline">
-          </div>
-          <br><br>
-          <p class="text-justify">
-            We decompose a given RGB video sequence into overlapping frame clusters and apply a geometric foundation model to obtain cluster-wise geometries and 2D segmentation masks. Our 3D-Aware Alignment module then aligns the fragmented cluster-wise predictions into a unified global proxy geometry and temporally consistent video object segmentation. These consistent 2D priors, together with the proxy geometry, are further used to refine the scene representation through Instance-Aware Bundle Adjustment. The final output is a globally consistent 3D reconstruction with temporally coherent, ID-consistent object segmentation.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <br><br>
-  
-  <section>
-  <div class="table-section">
-    <h4><strong>3D Instance Segmentation Benchmark</strong></h4>
-    <hr style="margin-top: 0px">
-    <div class="paper-table-title">
-      <strong>Table 2: 3D Class-Agnostic Instance Segmentation</strong> on ScanNet200 and ScanNet++v2.
-      We compare our method with prior 2D-to-3D lifting approaches under two settings:
-      without ground-truth (GT) geometry (top) and with ground-truth geometry (bottom).
-      The <strong>best</strong> and <span class="second">second best</span> results are marked as bold and underline.
-    </div>
-
-    <div class="paper-table-wrap">
-      <table class="paper-table">
-        <thead>
-          <tr>
-            <th rowspan="2">Method</th>
-            <th rowspan="2">GT<br>Geometry</th>
-            <th colspan="6" class="group-divider-left">ScanNet200</th>
-            <th colspan="6" class="group-divider-left">ScanNet++v2</th>
-          </tr>
-          <tr>
-            <th class="group-divider-left">AP↑</th>
-            <th>AP<sub>50</sub>↑</th>
-            <th>AP<sub>25</sub>↑</th>
-            <th>AR↑</th>
-            <th>RC<sub>50</sub>↑</th>
-            <th>RC<sub>25</sub>↑</th>
-
-            <th class="group-divider-left">AP↑</th>
-            <th>AP<sub>50</sub>↑</th>
-            <th>AP<sub>25</sub>↑</th>
-            <th>AR↑</th>
-            <th>RC<sub>50</sub>↑</th>
-            <th>RC<sub>25</sub>↑</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td>1. Direct Lifting <span class="ref">[44]</span></td>
-            <td>×</td>
-            <td class="group-divider-left">1.6</td>
-            <td>3.5</td>
-            <td>8.9</td>
-            <td>4.9</td>
-            <td>7.2</td>
-            <td>13.1</td>
-
-            <td class="group-divider-left">0.3</td>
-            <td>0.9</td>
-            <td>1.4</td>
-            <td>3.5</td>
-            <td>4.6</td>
-            <td>5.9</td>
-          </tr>
-
-          <tr>
-            <td>2. SAM3D <span class="ref">[44, 39]</span></td>
-            <td>×</td>
-            <td class="group-divider-left">5.2</td>
-            <td>12.7</td>
-            <td>24.7</td>
-            <td>16.6</td>
-            <td class="second">33.3</td>
-            <td class="second">52.3</td>
-
-            <td class="group-divider-left">3.3</td>
-            <td>8.8</td>
-            <td>18.9</td>
-            <td>10.9</td>
-            <td>24.4</td>
-            <td class="second">43.4</td>
-          </tr>
-
-          <tr>
-            <td>3. Open3DIS <span class="ref">[1, 44]</span></td>
-            <td>×</td>
-            <td class="group-divider-left second">7.9</td>
-            <td class="second">18.3</td>
-            <td class="second">34.5</td>
-            <td class="second">17.3</td>
-            <td>32.1</td>
-            <td>47.3</td>
-
-            <td class="group-divider-left second">7.7</td>
-            <td class="second">16.5</td>
-            <td class="second">29.8</td>
-            <td class="second">14.2</td>
-            <td class="second">25.4</td>
-            <td>37.1</td>
-          </tr>
-
-          <tr>
-            <td>4. PanSt3R <span class="ref">[21]</span></td>
-            <td>×</td>
-            <td class="group-divider-left">2.1</td>
-            <td>4.2</td>
-            <td>11.1</td>
-            <td>5.6</td>
-            <td>10.3</td>
-            <td>16.1</td>
-
-            <td class="group-divider-left">1.5</td>
-            <td>2.9</td>
-            <td>5.7</td>
-            <td>5.2</td>
-            <td>8.9</td>
-            <td>10.6</td>
-          </tr>
-
-          <tr>
-            <td><span class="best"><b><span style="color: #d62828;">5. Scale3D</span></b></span></td>
-            <td>×</td>
-            <td class="group-divider-left best">17.1</td>
-            <td class="best">32.7</td>
-            <td class="best">48.4</td>
-            <td class="best">30.8</td>
-            <td class="best">56.6</td>
-            <td class="best">79.4</td>
-
-            <td class="group-divider-left best">18.1</td>
-            <td class="best">33.8</td>
-            <td class="best">47.2</td>
-            <td class="best">32.3</td>
-            <td class="best">57.8</td>
-            <td class="best">76.7</td>
-          </tr>
-
-          <tr class="section-divider">
-            <td>6. Direct Lifting <span class="ref">[44]</span></td>
-            <td>✓</td>
-            <td class="group-divider-left">4.8</td>
-            <td>15.3</td>
-            <td>40.1</td>
-            <td>22.5</td>
-            <td>53.4</td>
-            <td>79.5</td>
-
-            <td class="group-divider-left">4.3</td>
-            <td>10.1</td>
-            <td>28.9</td>
-            <td>18.5</td>
-            <td>37.2</td>
-            <td>65.9</td>
-          </tr>
-
-          <tr>
-            <td>7. Felzenszwalb <span class="ref">[43]</span></td>
-            <td>✓</td>
-            <td class="group-divider-left">4.5</td>
-            <td>9.3</td>
-            <td>26.1</td>
-            <td>8.9</td>
-            <td>18.3</td>
-            <td>50.3</td>
-
-            <td class="group-divider-left">4.2</td>
-            <td>8.9</td>
-            <td>22.1</td>
-            <td>8.2</td>
-            <td>17.4</td>
-            <td>42.4</td>
-          </tr>
-
-          <tr>
-            <td>8. SAM3D <span class="ref">[44, 39]</span></td>
-            <td>✓</td>
-            <td class="group-divider-left">6.7</td>
-            <td>21.7</td>
-            <td>46.4</td>
-            <td>21.6</td>
-            <td>49.9</td>
-            <td>77.6</td>
-
-            <td class="group-divider-left">4.7</td>
-            <td>13.0</td>
-            <td>33.0</td>
-            <td>17.6</td>
-            <td>36.8</td>
-            <td>60.6</td>
-          </tr>
-
-          <tr>
-            <td>9. Open3DIS <span class="ref">[1, 44, 43]</span></td>
-            <td>✓</td>
-            <td class="group-divider-left second">29.1</td>
-            <td class="second">44.0</td>
-            <td class="second">49.1</td>
-            <td class="second">55.5</td>
-            <td class="second">83.2</td>
-            <td class="second">92.1</td>
-
-            <td class="group-divider-left second">21.8</td>
-            <td class="second">38.9</td>
-            <td class="second">46.5</td>
-            <td class="second">42.3</td>
-            <td class="second">75.1</td>
-            <td class="second">88.9</td>
-          </tr>
-
-          <tr>
-            <td>10. PanSt3R <span class="ref">[21, 43]</span></td>
-            <td>✓</td>
-            <td class="group-divider-left">9.9</td>
-            <td>28.4</td>
-            <td>48.1</td>
-            <td>20.1</td>
-            <td>45.2</td>
-            <td>69.9</td>
-
-            <td class="group-divider-left">8.2</td>
-            <td>25.3</td>
-            <td>40.1</td>
-            <td>24.7</td>
-            <td>49.9</td>
-            <td>72.1</td>
-          </tr>
-
-          <tr>
-            <td><span class="best"><b><span style="color: #d62828;">11. Scale3D</span></b></span> <span class="ref">[43]</span></td>
-            <td>✓</td>
-            <td class="group-divider-left best">31.5</td>
-            <td class="best">48.2</td>
-            <td class="best">55.5</td>
-            <td class="best">58.6</td>
-            <td class="best">85.2</td>
-            <td class="best">93.1</td>
-
-            <td class="group-divider-left best">28.4</td>
-            <td class="best">43.9</td>
-            <td class="best">49.3</td>
-            <td class="best">54.2</td>
-            <td class="best">82.7</td>
-            <td class="best">92.1</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  </section>
-  <br><br>
-  
-  <section>
-  <div class="container section-container">
-    <div class="row">
-      <div class="col-12">
-        <h3><strong>Video</strong></h3>
-        <hr style="margin-top: 0px">
-
-        <div style="display:flex; justify-content:center;">
-          <video
-            width="95%"
-            controls
-            autoplay
-            muted
-            loop
-            playsinline
-            style="border-radius: 1px; border: 1px solid #dddddd; background: #000;"
-          >
-            <source src="images/Scale3D_supplmentary-video-compressed.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-  </section>
-
-  <br><br>
-  <section>
-    <div class="container scene-section-container">
-      <div class="row">
-        <div class="col-12">
-          <h3><strong><b><span style="color: #d62828;">Scale3D</span></b> Results on GT Point Cloud</strong></h3>
-          <hr style="margin-top: 0px">
-          <b>Click the thumbnails below to select scenes.</b>
-
-          <div class="thumbnail-strip-wrapper mt-2">
-            <button class="slide-arrow-custom" id="thumb-prev">&#8249;</button>
-
-            <div class="thumbnail-row-custom" id="thumbnail-row">
-              <button class="thumbnail-btn-custom active" data-scene="scannetpp_0d2e">
-                <img src="images/thumbnails/0d2e.JPG" alt="ScanNet++ 0d2e thumbnail">
-                ScanNet++ 0d2e
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_1ada">
-                <img src="images/thumbnails/1ada.JPG" alt="ScanNet++ 1ada thumbnail">
-                ScanNet++ 1ada
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_3e8b">
-                <img src="images/thumbnails/3e8b.JPG" alt="ScanNet++ 3e8b thumbnail">
-                ScanNet++ 3e8b
-              </button>
-
-              <button class="thumbnail-btn-custom" data-scene="scannetpp_a24f">
-                <img src="images/thumbnails/a24f.JPG" alt="ScanNet++ a24f thumbnail">
-                ScanNet++ a24f
-              </button>
-            </div>
-
-            <button class="slide-arrow-custom" id="thumb-next">&#8250;</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <br>
-
-  <section>
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-
-          <div class="scene-panel active" id="scannetpp_0d2e">
-            <h4><strong>3D Instance Segmentation on GT point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/0d2ee665be_scale3d.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_1ada">
-            <h4><strong>3D Instance Segmentation on GT point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/1ada7a0617_scale3d.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_3e8b">
-            <h4><strong>3D Instance Segmentation on GT point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/3e8bba0176_scale3d.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-
-          <div class="scene-panel" id="scannetpp_a24f">
-            <h4><strong>3D Instance Segmentation on GT point cloud</strong></h4>
-            <div class="ply-viewer-wrapper">
-              <div class="ply-viewer" data-ply="ply/a24f64f7fb_scale3d.ply"></div>
-            </div>
-            <p class="instruction-text">
-              <b>Left drag:</b> rotate &nbsp; | &nbsp;
-              <b>Right drag:</b> pan &nbsp; | &nbsp;
-              <b>Wheel / trackpad:</b> zoom
-            </p>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <br><br><br>
-  <!-- Qualit predicted PCL -->
-
-  <div class="container scene-section-container">
-    <div class="row">
-      <div class="col-12">
-        <h3><strong>More <b><span style="color: #d62828;">Scale3D</span></b> Qualitative Results on Predicted Point Cloud (<a href="quali/index.html">Click Here</a>)</strong></h3>
-        <hr style="margin-top: 0px">
-
-        <div style="text-align:center; margin-top: 16px;">
-          <a href="quali/index.html">
-            <img
-              src="images/quali_pred.png"
-              alt="More qualitative results on predicted point cloud"
-              style="width: 85%; border: 1px solid #dddddd; border-radius: 10px;"
-            >
-          </a>
-        </div>
-
-        <p style="text-align:center; margin-top: 10px;">
-          Click the figure to view more qualitative results.
-        </p>
-      </div>
-    </div>
+  <div class="footer-links">
+    <a href="#top">Back to top</a>
   </div>
 
-  <div class="container section-container">
-    <div class="row">
-      <div class="col-12">
-        <h3><strong>Contact</strong></h3>
-        <hr style="margin-top: 0px">
-        <p>
-          Please feel free to contact
-          <a href="https://phucnda.github.io/">Phuc Nguyen</a>
-        </p>
-      </div>
-    </div>
+  <p class="footer-credit">
+    We sincerely thank <span>Trinh Huynh</span> for valuable
+    contributions to the webpage design and demo.
+  </p>
+</footer>
   </div>
 
-  <div class="container section-container">
-    <div class="row">
-      <div class="col-12">
-        <h3><strong>Acknowledgement</strong></h3>
-        <hr style="margin-top: 0px">
-        <p>
-          The source code is built upon  <a href="https://open3dis.github.io/">Open3DIS</a>, <a href="https://github.com/naver/panst3r">PanSt3R</a>, <a href="https://github.com/LeoChengKX/MERG3R">MERG3R</a> and <a href="https://github.com/lkeab/gaussian-grouping/tree/main">Gaussian Grouping</a>.
-          <br><br>
-          We thank Tuan Duc Ngo, Lojze Zust, Heechan Yoon, Ruohan Gao for early valuable discussions.
-          <br><br>
-          We thank Trinh Huynh for valuable help on the demo.
-        </p>
-      </div>
-    </div>
-  </div>
+  <script>
+    /* =========================================================
+       YOUR RESEARCH COLLECTION
 
-  <footer class="text-center" style="margin-bottom: 10px; font-size: medium;">
-    <hr>
-    Borrow the 
-    <a href="https://yd-yin.github.io/SAI3D/" target="_blank">website template</a>.
-  </footer>
+       Add another object to WORKS to add a paper.
 
-  <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
+       media.type:
+         "image" or "video"
 
-    const viewerStates = new Map();
+       For local media:
+         src: "assets/sega.jpg"
+         src: "assets/sega.mp4"
 
-    function createControls(camera, renderer) {
-      const controls = new OrbitControls(camera, renderer.domElement);
+       For video:
+         poster: "assets/sega-poster.jpg"
 
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.12;
+       Links with an empty URL are omitted.
+       Order in this array = order on the page.
+       ========================================================= */
 
-      controls.rotateSpeed = 0.7;
-      controls.zoomSpeed = 1.6;
-      controls.panSpeed = 1.3;
+    const WORKS = [
+      {
+        id: "sega",
+        name: "SEGA",
+        venue: "",
 
-      controls.screenSpacePanning = true;
-      controls.enablePan = true;
-      controls.enableZoom = true;
-      controls.enableRotate = true;
+        focus: "3D indoor reconstruction with consistent object understanding.",
 
-      controls.minDistance = 0.02;
-      controls.maxDistance = 1000;
+        description:
+          "Jointly reconstructing indoor scenes and associating object instances across long image sequences for globally consistent 3D scene understanding.",
 
-      controls.mouseButtons = {
-        LEFT: THREE.MOUSE.ROTATE,
-        MIDDLE: THREE.MOUSE.DOLLY,
-        RIGHT: THREE.MOUSE.PAN
-      };
+        media: {
+  type: "video",
+  src: "assets/teaser_sega.mp4",
+  poster: "",
+  alt: "SEGA video demonstration.",
+  caption: "Indoor scene reconstruction and instance understanding."
+},
 
-      controls.touches = {
-        ONE: THREE.TOUCH.ROTATE,
-        TWO: THREE.TOUCH.DOLLY_PAN
-      };
+        // Add the new SEGA project URL here.
+        project: "https://scale3d-scene.github.io/SEGA",
 
-      return controls;
+        links: [
+          { label: "Project", url: "" },
+          { label: "Paper", url: "" },
+          { label: "Code", url: "" }
+        ]
+      },
+
+      {
+        id: "open3dis",
+        name: "Open3DIS",
+        venue: "CVPR 2024",
+
+        focus: "Finding objects with arbitrary text queries.",
+
+        description:
+          "Connecting 3D scene with language using instance-aware feature aggregation.",
+
+       media: {
+  type: "video",
+  src: "assets/teaser_open3dis.mp4",
+  poster: "",
+  alt: "Open3DIS video demonstration.",
+  caption: "Language-driven 3D scene understanding."
+},
+
+        project: "https://open3dis.github.io/",
+
+        links: [
+          {
+            label: "Project",
+            url: "https://open3dis.github.io/"
+          },
+          {
+            label: "Paper",
+            url: "https://arxiv.org/abs/2312.10671"
+          },
+          {
+            label: "Code",
+            url: "https://github.com/VinAIResearch/Open3DIS"
+          }
+        ]
+      },
+
+      {
+        id: "any3dis",
+        name: "Any3DIS",
+        venue: "CVPR 2025",
+
+        focus: "Decomposing 3D scene into object instances.",
+
+        description:
+          "Producing class-agnostic 3D object instances that can serve as reliable proposals for downstream tasks such as open-vocabulary recognition, scene understanding, and 3D reasoning. ",
+
+        media: {
+          type: "video",
+          src: "assets/teaser_any3dis.mp4",
+          poster: "",
+          alt:
+            "Any3DIS teaser comparing its segmentation results " +
+            "with Open3DIS.",
+          caption: "Class-agnostic 3D instance segmentation."
+        },
+
+        project: "https://any3dis.github.io/",
+
+        links: [
+          {
+            label: "Project",
+            url: "https://any3dis.github.io/"
+          },
+          {
+            label: "Paper",
+            url: "https://arxiv.org/abs/2411.16183"
+          }
+        ]
+      },
+
+      {
+        id: "oe3dis",
+        name: "OE-3DIS",
+        venue: "ICCV 2025 / OpenSUN3D",
+
+        focus: "Understanding 3D scenes beyond a fixed vocabulary.",
+
+        description:
+          "Aggregating multi-view visual evidence around a queried 3D location and using a multimodal LLM to infer the corresponding object class without a predefined vocabulary.",
+
+        media: {
+          type: "video",
+          src:
+            "assets/teaser_oe3dis.mp4",
+          poster: "",
+          alt:
+            "OE-3DIS illustration contrasting open-vocabulary " +
+            "and open-ended 3D instance segmentation.",
+          caption: "Open-ended recognition without predefined test labels."
+        },
+
+        project: "https://phucnda.github.io/blog/oe3dis/index.html",
+
+        links: [
+          {
+            label: "Project",
+            url: "https://phucnda.github.io/blog/oe3dis/index.html"
+          },
+          {
+            label: "Paper",
+            url: "https://arxiv.org/abs/2408.11747"
+          },
+          {
+            label: "Code",
+            url: "https://github.com/PhucNDA/OE-3DIS"
+          }
+        ]
+      }
+    ];
+
+    /* =========================================================
+       PAGE RENDERING
+       ========================================================= */
+
+    const grid = document.querySelector("#works-grid");
+
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+
+      return node;
     }
 
-    function initPLYViewer(container) {
-      if (!container) return;
-      if (viewerStates.has(container)) return;
+    function link(label, url) {
+      const node = element("a", "", label);
+      node.href = url;
+      return node;
+    }
 
-      const plyPath = container.dataset.ply;
-      if (!plyPath) return;
+    function createMedia(work, index) {
+      const figure = element("figure", "media-frame");
+      const stage = element("div", "media-stage");
 
-      const width = Math.max(container.clientWidth, 600);
-      const height = Math.max(container.clientHeight, 360);
-
-      container.innerHTML = '<div class="viewer-loading">Loading 3D scene...</div>';
-
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xf7f7f7);
-
-      const camera = new THREE.PerspectiveCamera(60, width / height, 0.001, 5000);
-      camera.position.set(0, 0, 3);
-
-      const renderer = new THREE.WebGLRenderer({
-        antialias: true,
-        alpha: false
-      });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(width, height);
-
-      const controls = createControls(camera, renderer);
-
-      scene.add(new THREE.AmbientLight(0xffffff, 1.45));
-
-      const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.0);
-      dirLight1.position.set(2, 2, 2);
-      scene.add(dirLight1);
-
-      const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.6);
-      dirLight2.position.set(-2, 1, -1);
-      scene.add(dirLight2);
-
-      const loader = new PLYLoader();
-
-      loader.load(
-        plyPath,
-        (geometry) => {
-          container.innerHTML = '';
-          container.appendChild(renderer.domElement);
-
-          geometry.computeBoundingBox();
-
-          const box = geometry.boundingBox;
-          const center = new THREE.Vector3();
-          box.getCenter(center);
-          geometry.translate(-center.x, -center.y, -center.z);
-
-          geometry.computeBoundingBox();
-          const size = new THREE.Vector3();
-          geometry.boundingBox.getSize(size);
-          const maxDim = Math.max(size.x, size.y, size.z);
-
-          let object;
-
-          if (geometry.hasAttribute('color')) {
-            object = new THREE.Points(
-              geometry,
-              new THREE.PointsMaterial({
-                size: Math.max(maxDim * 0.009, 0.009),
-                vertexColors: true
-              })
-            );
-          } else {
-            object = new THREE.Points(
-              geometry,
-              new THREE.PointsMaterial({
-                size: Math.max(maxDim * 0.009, 0.009),
-                color: 0x444444
-              })
-            );
-          }
-
-          scene.add(object);
-
-          const distance = Math.max(maxDim * 2.4, 3.0);
-          camera.position.set(distance * 0.55, distance * 0.35, distance);
-          camera.lookAt(0, 0, 0);
-
-          controls.target.set(0, 0, 0);
-          controls.update();
-
-          console.log('PLY loaded:', plyPath);
-        },
-        undefined,
-        (error) => {
-          console.error('Failed to load PLY:', plyPath, error);
-          container.innerHTML = '<div class="viewer-error">Failed to load ' + plyPath + '</div>';
-        }
+      const fallback = element("div", "media-fallback");
+      const fallbackMessage = element(
+        "span",
+        "",
+        work.media.src ? "Loading preview…" : "Preview coming soon"
       );
 
-      function animate() {
-        if (!viewerStates.has(container)) return;
-        requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
+      fallback.append(
+        element("strong", "", work.name),
+        fallbackMessage
+      );
+
+      stage.append(fallback);
+
+      const source = work.media.src;
+
+      if (source) {
+        const isVideo = work.media.type === "video";
+        const media = document.createElement(isVideo ? "video" : "img");
+
+        function ready() {
+          stage.classList.add("is-ready");
+        }
+
+        function failed() {
+          stage.classList.remove("is-ready");
+          fallbackMessage.textContent = "Preview unavailable";
+          media.hidden = true;
+
+          // Preserve access to the project if its image fails.
+          // The fallback is visible underneath the empty image link.
+        }
+
+        media.addEventListener("error", failed);
+
+        if (isVideo) {
+  stage.classList.add("media-stage--video");
+
+  // Silent, continuously looping teaser.
+  media.muted = true;
+  media.defaultMuted = true;
+  media.autoplay = true;
+  media.loop = true;
+  media.playsInline = true;
+  media.controls = false;
+  media.preload = "auto";
+
+  media.setAttribute("muted", "");
+  media.setAttribute("autoplay", "");
+  media.setAttribute("loop", "");
+  media.setAttribute("playsinline", "");
+  media.setAttribute("aria-label", work.media.alt);
+
+  if (work.media.poster) {
+    media.poster = work.media.poster;
+  }
+
+  media.addEventListener("loadedmetadata", ready);
+
+  media.addEventListener(
+    "canplay",
+    () => {
+      media.play().catch(() => {
+        // The browser may restrict autoplay.
+      });
+    },
+    { once: true }
+  );
+
+  stage.append(media);
+} else {
+          media.alt = work.media.alt;
+          media.loading = index < 2 ? "eager" : "lazy";
+          media.decoding = "async";
+          media.width = 960;
+          media.height = 600;
+
+          media.addEventListener("load", ready);
+
+          if (work.project) {
+            const imageLink = link("", work.project);
+            imageLink.setAttribute(
+              "aria-label",
+              `Open the ${work.name} project`
+            );
+            imageLink.append(media);
+            stage.append(imageLink);
+          } else {
+            stage.append(media);
+          }
+        }
+
+        // Assign after listeners are attached.
+        media.src = source;
       }
 
-      viewerStates.set(container, {
-        camera,
-        renderer,
-        controls,
-        scene
-      });
+      figure.append(stage);
 
-      animate();
-    }
-
-    function resizeViewer(container) {
-      const state = viewerStates.get(container);
-      if (!state) return;
-
-      const width = Math.max(container.clientWidth, 600);
-      const height = Math.max(container.clientHeight, 360);
-
-      state.camera.aspect = width / height;
-      state.camera.updateProjectionMatrix();
-      state.renderer.setSize(width, height);
-    }
-
-    function activateScene(sceneId) {
-      const sceneButtons = document.querySelectorAll('.thumbnail-btn-custom');
-      const scenePanels = document.querySelectorAll('.scene-panel');
-
-      sceneButtons.forEach((btn) => {
-        btn.classList.toggle('active', btn.dataset.scene === sceneId);
-      });
-
-      scenePanels.forEach((panel) => {
-        panel.classList.toggle('active', panel.id === sceneId);
-      });
-
-      const activePanel = document.getElementById(sceneId);
-      if (!activePanel) return;
-
-      const viewer = activePanel.querySelector('.ply-viewer');
-      if (viewer) {
-        initPLYViewer(viewer);
-        setTimeout(() => resizeViewer(viewer), 120);
+      if (work.media.caption) {
+        figure.append(
+          element("figcaption", "media-caption", work.media.caption)
+        );
       }
+
+      return figure;
     }
 
-    window.addEventListener('resize', () => {
-      viewerStates.forEach((_, container) => {
-        resizeViewer(container);
-      });
-    });
+    function createWork(work, index) {
+      const article = element("article", "work");
+      article.id = work.id;
+      article.setAttribute("aria-labelledby", `${work.id}-title`);
 
-    document.querySelectorAll('.thumbnail-btn-custom').forEach((button) => {
-      button.addEventListener('click', () => {
-        activateScene(button.dataset.scene);
-      });
-    });
+      const heading = element("div", "work-heading");
+      const title = element("h3", "work-title");
+      title.id = `${work.id}-title`;
 
-    const thumbnailRow = document.getElementById('thumbnail-row');
-    const prevBtn = document.getElementById('thumb-prev');
-    const nextBtn = document.getElementById('thumb-next');
-
-    if (prevBtn && nextBtn && thumbnailRow) {
-      prevBtn.addEventListener('click', () => {
-        thumbnailRow.scrollBy({ left: -220, behavior: 'smooth' });
-      });
-
-      nextBtn.addEventListener('click', () => {
-        thumbnailRow.scrollBy({ left: 220, behavior: 'smooth' });
-      });
-    }
-
-    const firstActivePanel = document.querySelector('.scene-panel.active');
-    if (firstActivePanel) {
-      const firstViewer = firstActivePanel.querySelector('.ply-viewer');
-      if (firstViewer) {
-        initPLYViewer(firstViewer);
-        setTimeout(() => resizeViewer(firstViewer), 120);
+      if (work.project) {
+        title.append(link(work.name, work.project));
+      } else {
+        title.textContent = work.name;
       }
+
+      heading.append(title);
+
+      if (work.venue) {
+        heading.append(element("p", "work-venue", work.venue));
+      }
+
+      const body = element("div", "work-body");
+
+      body.append(
+        element("p", "work-focus", work.focus),
+        element("p", "work-description", work.description)
+      );
+
+      const resources = element("div", "work-links");
+
+      for (const resource of work.links ?? []) {
+        if (resource.url) {
+          resources.append(link(resource.label, resource.url));
+        }
+      }
+
+      body.append(resources);
+
+      article.append(
+        heading,
+        createMedia(work, index),
+        body
+      );
+
+      return article;
+    }
+
+    for (const [index, work] of WORKS.entries()) {
+      grid.append(createWork(work, index));
     }
   </script>
-<div class="container mt-5" hidden="hidden">
-        {{ content }}  
-  <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=crzu3lG3srKUG_Kdl0cOiR_f4VXHTkbi9rRht9nboFo&cl=ffffff&w=a"></script>  
-</div>
 </body>
 </html>
